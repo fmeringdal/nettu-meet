@@ -77,8 +77,7 @@ export const config = {
         // run anywhere but on localhost
         webRtcTransport: {
             listenIps: [
-                { ip: '0.0.0.0', announcedIp: '192.168.1.34' },
-                // { ip: '127.0.0.1', announcedIp: undefined },
+                { ip: '127.0.0.1', announcedIp: undefined },
                 // { ip: '127.0.0.1', announcedIp: '192.168.65.1' },
                 // { ip: '172.17.0.1', announcedIp: undefined },
                 // { ip: '127.0.0.1', announcedIp: '192.168.1.34' },

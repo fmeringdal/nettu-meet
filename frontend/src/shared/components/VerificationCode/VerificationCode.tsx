@@ -97,7 +97,7 @@ export class VerificationCodeInput extends Component<Props, any> {
     const { onChange, onComplete, fields } = this.props;
     const val = values.join("");
     onChange && onChange(val);
-    if (onComplete && fields && val.length >= fields) {
+    if (typeof onComplete === "function" && fields && val.length >= fields) {
       onComplete(val);
     }
   };
