@@ -64,7 +64,7 @@ The server exposes a swagger document at http://localhost:5000/api/v1/docs/.
 
 ## Contributing
 
-Contributions are welcome and are greatly appreciated!
+Contributions are welcome and greatly appreciated!
 
 ## License
 
