@@ -7,7 +7,7 @@
 `Nettu Meet` is an open source video conference web application designed for interactive online tutoring. Some of the features included are:
 
 - **Audio and video**: Real-time sharing of audio and video.
-- **Shared whiteboard**: Draw your ideas on a shared whiteboard.
+- **Shared whiteboard**: Collaborate with students on a shared whiteboard.
 - **Screen sharing**: Go to presenting mode by sharing your screen.
 - **Chat**: Send simple messages to other participants of the meeting.
 - **File sharing**: Upload relevant files to the meeting.
