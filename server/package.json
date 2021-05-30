@@ -1,8 +1,7 @@
 {
-  "name": "nettu-meeting-server",
+  "name": "nettu-meet-server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
     "start": "./integrations/start.sh",
     "start:prod": "ts-node ./src/index.ts",
