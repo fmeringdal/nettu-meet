@@ -1,0 +1,8 @@
+node_modules/
+dist/
+build/
+infra/
+.env
+.vscode
+.eslintcache
+.terraform

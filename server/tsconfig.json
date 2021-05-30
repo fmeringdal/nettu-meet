@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "es2018",
+    "module": "commonjs",
+    "lib": ["es2018", "esnext.asynciterable"],
+    "sourceMap": true,
+    "noEmitOnError": true,
+    "outDir": "./dist",
+    "moduleResolution": "node",
+    "types": ["node", "jest"],
+    "typeRoots": ["./node_modules/@types", "./src/@types"],
+    "removeComments": true,
+    "noImplicitAny": true,
+    "strict": true,
+    "noUnusedLocals": false,
+    "noImplicitThis": true,
+    "noUnusedParameters": false,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "src/*": ["./src/*"]
+    }
+  },
+  "exclude": ["node_modules", "./src/**/*test.ts"],
+  "include": ["./src/**/*.ts"]
+}

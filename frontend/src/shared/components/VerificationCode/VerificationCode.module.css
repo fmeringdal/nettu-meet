@@ -1,0 +1,35 @@
+.react-code-input {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Seperator {
+  margin: 8px;
+  font-weight: 400;
+  font-size: 1rem;
+}
+
+.InputSeperator {
+  height: 50px;
+  width: 1px;
+}
+
+.input-wrapper {
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.15);
+  height: 74px;
+}
+
+.input-wrapper input {
+  border: none;
+  font-size: 20px;
+  text-align: center;
+  box-sizing: border-box;
+  border-radius: 0;
+  -webkit-appearance: initial;
+  background-color: transparent;
+  color: #323e49;
+  outline: none;
+  height: 100%;
+}

@@ -1,0 +1,257 @@
+swagger: '2.0'
+info:
+    title: Nettu Meet API
+    description: API description of the endpoints relevant for external applications that integrates with Nettu Meet.
+    version: 1.0.0
+basePath: /api/v1
+schemes:
+    - https
+paths:
+    /account:
+        put:
+            tags:
+                - 'account'
+            summary: 'Updates account'
+            description: 'Updates account'
+            consumes:
+                - 'application/json'
+            produces:
+                - 'application/json'
+            parameters:
+                - in: 'body'
+                  name: 'body'
+                  description: 'Account properties'
+                  required: true
+                  schema:
+                      $ref: '#/definitions/UpdateAccountRequest'
+            security:
+                - secretApiKey: []
+            responses:
+                '200':
+                    description: 'Account updated'
+                '405':
+                    description: 'Invalid input'
+                '409':
+                    description: 'Conflict, probably account name that is already taken.'
+    /meeting:
+        post:
+            tags:
+                - 'meeting'
+            summary: 'Create meeting'
+            description: 'Create meeting'
+            consumes:
+                - 'application/json'
+            produces:
+                - 'application/json'
+            parameters:
+                - in: 'body'
+                  name: 'body'
+                  description: 'Meeting properties'
+                  required: true
+                  schema:
+                      $ref: '#/definitions/CreateMeetingRequest'
+            security:
+                - secretApiKey: []
+            responses:
+                '201':
+                    description: 'Meeting created'
+                    schema:
+                        $ref: '#/definitions/MeetingCreatedResponse'
+                '405':
+                    description: 'Invalid input'
+    /meeting/demo:
+        post:
+            tags:
+                - 'meeting'
+            summary: 'Creates a demo meeting'
+            description: 'Creates a demo meeting that will be open for a couple of minutes starting from when the request is made'
+            produces:
+                - 'application/json'
+            responses:
+                '201':
+                    description: 'Meeting created'
+                    schema:
+                        $ref: '#/definitions/MeetingCreatedResponse'
+    /meeting/{meetingId}:
+        get:
+            tags:
+                - 'meeting'
+            summary: 'Get meeting'
+            description: 'Get meeting from meetingId'
+            parameters:
+                - in: path
+                  name: meetingId
+                  required: true
+                  type: 'string'
+            produces:
+                - 'application/json'
+            responses:
+                '200':
+                    description: 'Meeting found'
+                    schema:
+                        type: 'object'
+                        properties:
+                            meeting:
+                                $ref: '#/definitions/Meeting'
+                            account:
+                                $ref: '#/definitions/Account'
+                '404':
+                    description: 'Meeting not found'
+        put:
+            tags:
+                - 'meeting'
+            summary: 'Update meeting'
+            description: 'Update meeting'
+            parameters:
+                - in: path
+                  name: meetingId
+                  required: true
+                  type: 'string'
+                - in: 'body'
+                  name: 'body'
+                  description: 'Meeting properties'
+                  required: true
+                  schema:
+                      $ref: '#/definitions/UpdateMeetingRequest'
+            security:
+                - secretApiKey: []
+            produces:
+                - 'application/json'
+            responses:
+                '200':
+                    description: 'Meeting updated'
+                '403':
+                    description: 'Unauthorized'
+                '404':
+                    description: 'Meeting not found'
+        delete:
+            tags:
+                - 'meeting'
+            summary: 'Delete meeting'
+            description: 'Delete meeting'
+            parameters:
+                - in: path
+                  name: meetingId
+                  required: true
+                  type: 'string'
+            security:
+                - secretApiKey: []
+            produces:
+                - 'application/json'
+            responses:
+                '200':
+                    description: 'Meeting deleted'
+                '403':
+                    description: 'Unauthorized'
+                '404':
+                    description: 'Meeting not found'
+
+securityDefinitions:
+    secretApiKey:
+        type: 'apiKey'
+        name: 'authorization'
+        in: 'header'
+        description: 'Format like this: Bearer {YOUR_SECRET_API_KEY}'
+
+definitions:
+    Account:
+        type: 'object'
+        required:
+            - id
+            - name
+            - label
+            - redirectURIs
+            - defaultRedirectURI
+        properties:
+            id:
+                type: 'string'
+            name:
+                type: 'string'
+            label:
+                type: 'string'
+            iconURL:
+                type: 'string'
+            redirectURIs:
+                type: 'array'
+                items:
+                    type: 'string'
+            defaultRedirectURI:
+                type: 'string'
+    UpdateAccountRequest:
+        type: 'object'
+        properties:
+            name:
+                type: 'string'
+            label:
+                type: 'string'
+            iconURL:
+                type: 'string'
+            redirectURIs:
+                type: 'array'
+                items:
+                    type: 'string'
+            defaultRedirectURI:
+                type: 'string'
+    Meeting:
+        type: 'object'
+        required:
+            - id
+            - title
+            - type
+            - redirectURI
+        properties:
+            id:
+                type: 'string'
+            title:
+                type: 'string'
+            type:
+                type: 'string'
+                enum: ['open']
+            redirectURI:
+                type: 'string'
+            openingTime:
+                $ref: '#/definitions/MeetingOpeningTime'
+    CreateMeetingRequest:
+        type: 'object'
+        required:
+            - title
+        properties:
+            title:
+                type: 'string'
+            redirectURI:
+                type: 'string'
+            openingTime:
+                $ref: '#/definitions/MeetingOpeningTime'
+    UpdateMeetingRequest:
+        type: 'object'
+        properties:
+            title:
+                type: 'string'
+            redirectURI:
+                type: 'string'
+            openingTime:
+                $ref: '#/definitions/MeetingOpeningTime'
+    MeetingCreatedResponse:
+        type: 'object'
+        properties:
+            meetingId:
+                type: 'string'
+            entrypoints:
+                type: 'array'
+                items:
+                    $ref: '#/definitions/MeetingEntryPoint'
+    MeetingOpeningTime:
+        type: 'object'
+        required:
+            - startTS
+            - endTS
+        properties:
+            startTS:
+                type: number
+            endTS:
+                type: number
+    MeetingEntryPoint:
+        type: 'object'
+        properties:
+            url:
+                type: string
