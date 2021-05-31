@@ -60,7 +60,7 @@ $ curl -X POST "http://localhost:5000/api/v1/meeting" -H  "authorization: nettu_
 
 ## Documentation
 
-The server exposes a swagger document at http://localhost:5000/api/v1/docs/.
+The server exposes a swagger document at http://localhost:5000/api/v1/docs/. Or you can check it out live [here](https://api.meet.nettubooking.com/api/v1/docs)
 
 
 
