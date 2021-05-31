@@ -1,0 +1,26 @@
+name: server
+on:
+  push:
+    paths:
+      - "server/**"
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy server using ssh
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST_IP }}
+          username: root
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            cd nettu-meet/server
+            git pull
+            npm i
+            rm integrations/.env
+            cp ~/.env integrations/.env
+            systemctl restart nettu-meeting

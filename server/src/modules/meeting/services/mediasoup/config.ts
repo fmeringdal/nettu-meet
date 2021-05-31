@@ -1,10 +1,11 @@
 import { RtpCodecCapability, TransportListenIp, WorkerSettings } from 'mediasoup/lib/types';
+import { isProduction } from '../../../../config';
 
 export const config = {
     // http server ip, port, and peer timeout constant
     //
     httpIp: '0.0.0.0',
-    httpPort: 5000,
+    httpPort: isProduction ? 443 : 5000,
     httpPeerStale: 15000,
 
     // ssl certs. we'll start as http instead of https if we don't have
@@ -77,7 +78,10 @@ export const config = {
         // run anywhere but on localhost
         webRtcTransport: {
             listenIps: [
-                { ip: '127.0.0.1', announcedIp: undefined },
+                {
+                    ip: process.env.LISTEN_IP,
+                    announcedIp: process.env.ANNOUNCEMENT_IP,
+                },
                 // { ip: '127.0.0.1', announcedIp: '192.168.65.1' },
                 // { ip: '172.17.0.1', announcedIp: undefined },
                 // { ip: '127.0.0.1', announcedIp: '192.168.1.34' },

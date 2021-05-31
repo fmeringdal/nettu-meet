@@ -13,8 +13,7 @@ import { v1Router, v1SocketHandler } from './api/v1';
 import { redisConnection } from '../../services';
 import { createDefaultAccountController } from '../../../modules/account/useCases/createDefaultAccount';
 import { _db_connect_promise } from '../db/connection';
-
-const isProduction = process.env.ENVIRONMENT === 'prod';
+import { isProduction } from '../../../config';
 
 const corsConfig = {
     origin: isProduction ? '*' : '*',
@@ -32,7 +31,7 @@ const createServer = () => {
         const credentials = {
             key: privateKey,
             cert: certificate,
-            ca: ca,
+            ca,
         };
         return https.createServer(credentials, app);
     } else {
