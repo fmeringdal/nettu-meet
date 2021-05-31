@@ -58,8 +58,8 @@ export class CanvasManager extends EventEmitter {
   constructor() {
     super();
     this.toolbar = {
-      mode: CANVAS_MODE.PICKER,
-      color: "#00bd9d",
+      mode: CANVAS_MODE.FREEDRAW,
+      color: "#000",
       brushWidth: 7,
     };
     this.mouse = {
@@ -220,6 +220,7 @@ export class CanvasManager extends EventEmitter {
 
     this.canvasStataManger = new CanvasStateManager(this.canvas);
     this.isInitialized = true;
+    this.setMode(this.canvasToolbar.mode);
   }
 
   private getCanvas(): Canvas {

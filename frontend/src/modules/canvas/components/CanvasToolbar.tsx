@@ -10,7 +10,12 @@ import DownloadIcon from "@material-ui/icons/PublishRounded";
 import RedoIcon from "@material-ui/icons/RedoRounded";
 import TextIcon from "@material-ui/icons/TextFields";
 import UndoIcon from "@material-ui/icons/UndoRounded";
-import React, { FunctionComponent, useState, CSSProperties } from "react";
+import React, {
+  FunctionComponent,
+  useState,
+  CSSProperties,
+  Fragment,
+} from "react";
 import { FileUploadModal } from "../../../shared/components/FileUploadModal";
 import { canvasManager, CANVAS_MODE } from "../services/CanvasManager";
 import { useToolbarState } from "../services/ToolbarInteractor";
@@ -179,6 +184,13 @@ export const CanvasToolbar = (props: Props) => {
     setAnchorEl(null);
   };
 
+  const canSelectColor = [
+    CANVAS_MODE.FREEDRAW,
+    CANVAS_MODE.LINE,
+    CANVAS_MODE.RECT,
+    CANVAS_MODE.CIRCLE,
+  ].includes(mode as CANVAS_MODE);
+
   return (
     <Toolbar variant="dense">
       <div className={classes.toolbarBtn} onClick={() => canvasManager.undo()}>
@@ -215,55 +227,59 @@ export const CanvasToolbar = (props: Props) => {
           </div>
         ))}
       </BoxCenter>
-      <BoxCenter style={{ margin: "0 10px" }}>
-        {colorOptions.map((colorOption) => (
-          <div
-            className={classes.colorOptionContainer}
-            key={colorOption}
-            onClick={() => canvasManager.setColor(colorOption)}
-            style={
-              colorOption === color
-                ? { borderColor: color, borderRadius: "50%" }
-                : undefined
-            }
-          >
-            <div
-              className={classes.colorOption}
-              style={{
-                backgroundColor: colorOption,
-              }}
-            ></div>
-          </div>
-        ))}
-      </BoxCenter>
-      <BoxCenter style={{ margin: "0 10px" }}>
-        {[
-          { actual: 3, showing: 7 },
-          { actual: 5, showing: 9 },
-          { actual: 7, showing: 12 },
-          { actual: 11, showing: 16 },
-        ].map((size) => (
-          <div
-            className={classes.colorOptionContainer}
-            key={size.actual}
-            onClick={() => canvasManager.setBrushWidth(size.actual)}
-            style={
-              size.actual === brushWidth
-                ? { borderColor: "#323e49", borderRadius: "50%" }
-                : undefined
-            }
-          >
-            <div
-              style={{
-                backgroundColor: color,
-                width: `${size.showing}px`,
-                height: `${size.showing}px`,
-              }}
-              className={classes.colorOption}
-            ></div>
-          </div>
-        ))}
-      </BoxCenter>
+      {canSelectColor && (
+        <Fragment>
+          <BoxCenter style={{ margin: "0 10px" }}>
+            {colorOptions.map((colorOption) => (
+              <div
+                className={classes.colorOptionContainer}
+                key={colorOption}
+                onClick={() => canvasManager.setColor(colorOption)}
+                style={
+                  colorOption === color
+                    ? { borderColor: color, borderRadius: "50%" }
+                    : undefined
+                }
+              >
+                <div
+                  className={classes.colorOption}
+                  style={{
+                    backgroundColor: colorOption,
+                  }}
+                ></div>
+              </div>
+            ))}
+          </BoxCenter>
+          <BoxCenter style={{ margin: "0 10px" }}>
+            {[
+              { actual: 3, showing: 7 },
+              { actual: 5, showing: 9 },
+              { actual: 7, showing: 12 },
+              { actual: 11, showing: 16 },
+            ].map((size) => (
+              <div
+                className={classes.colorOptionContainer}
+                key={size.actual}
+                onClick={() => canvasManager.setBrushWidth(size.actual)}
+                style={
+                  size.actual === brushWidth
+                    ? { borderColor: "#323e49", borderRadius: "50%" }
+                    : undefined
+                }
+              >
+                <div
+                  style={{
+                    backgroundColor: color,
+                    width: `${size.showing}px`,
+                    height: `${size.showing}px`,
+                  }}
+                  className={classes.colorOption}
+                ></div>
+              </div>
+            ))}
+          </BoxCenter>
+        </Fragment>
+      )}
       {selectedObject && (
         <div className="flex-center">
           <button onClick={() => canvasManager.setSelectedObjectZPos(0)}>
