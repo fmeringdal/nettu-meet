@@ -25,7 +25,7 @@
 <br/>
 
 ## Live demo
-[Live dmeo](https://meet.nettubooking.com)
+[Live demo](https://meet.nettubooking.com)
 
 ## Run it locally
 * Run the Node.js server application in a terminal:
