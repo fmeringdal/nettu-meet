@@ -23,4 +23,5 @@ jobs:
             npm i
             rm integrations/.env
             cp ~/.env integrations/.env
-            systemctl restart nettu-meeting
+            systemctl stop nettu-meeting
+            systemctl start nettu-meeting
