@@ -10,7 +10,7 @@ import { userRouter } from '../../../../modules/user/infra/http/routes';
 const v1Router = express.Router();
 
 v1Router.get('/', (req, res) => {
-    return res.json({ message: 'Ofc we are up ...' });
+    return res.json({ message: 'Ofc we are up!' });
 });
 
 v1Router.use('/account', accountRouter);
