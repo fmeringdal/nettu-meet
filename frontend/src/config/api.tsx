@@ -8,13 +8,13 @@ const devApiConfig = {
 };
 
 const prodApiConfig = {
-  baseUrl: "https://api.live.nettu.se/api/v1",
-  url: "https://api.live.nettu.se",
-  docsUrl: "https://api.live.nettu.se/api/v1/docs",
+  baseUrl: "https://api.meet.nettubooking.com/api/v1",
+  url: "https://api.meet.nettubooking.com",
+  docsUrl: "https://api.meet.nettubooking.com/api/v1/docs",
 };
 
 const frontendUrl = !isDevelopment
-  ? "https://live.nettu.se"
+  ? "https://meet.nettubooking.com"
   : "http://localhost:3000";
 
 const apiConfig = !isDevelopment ? prodApiConfig : devApiConfig;
