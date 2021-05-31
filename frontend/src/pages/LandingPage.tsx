@@ -1,5 +1,6 @@
 import {
   AppBar,
+  Box,
   Button,
   Grid,
   makeStyles,
@@ -54,12 +55,13 @@ const useStyles = makeStyles((theme) => ({
   description: {
     fontSize: "1.125rem",
     lineHeight: "1.5rem",
-    paddingBottom: "3em",
     maxWidth: "30rem",
+    marginBottom: "1em",
   },
   leftBtns: {
     display: "flex",
     alignItems: "center",
+    marginTop: "3em",
   },
   joinBtnBtn: {
     border: "none",
@@ -192,15 +194,42 @@ const LandingPage = (props: Props) => {
             <Grid item md={5}>
               <div className={classes.left}>
                 <Typography className={classes.title}>
-                  Video conferencing for tutors
+                  Open source video conferencing for tutors
                 </Typography>
-                <Typography
+                {/* <Typography
                   className={classes.description}
                   color="textSecondary"
                 >
-                  Nettu Meet is a video conference application designed for
-                  interactive learning online.
-                </Typography>
+                  Nettu Meet is an open source video conference application
+                  designed for interactive learning online.
+                </Typography> */}
+                {[
+                  "Audio and video: Real-time sharing of audio and video.",
+                  "Shared whiteboard: Collaborate with students on a shared whiteboard.",
+                  "Screen sharing: Go to presenting mode by sharing your screen.",
+                  "Chat: Send simple messages to other participants of the meeting.",
+                  "File sharing: Upload relevant files to the meeting.",
+                  "Graph plotter: Insert mathematical graphs to the whiteboard.",
+                  "Customizable: Create an account and upload your own logos.",
+                ].map((feature) => (
+                  <Box
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      margin: "4px",
+                    }}
+                  >
+                    <Typography
+                      variant="body2"
+                      style={{ fontWeight: 600, marginRight: "5px" }}
+                    >
+                      {feature.split(":")[0] + ":"}
+                    </Typography>
+                    <Typography variant="body2" style={{ fontWeight: 400 }}>
+                      {feature.split(":")[1]}
+                    </Typography>
+                  </Box>
+                ))}
                 <div className={classes.leftBtns}>
                   <button
                     className={classes.joinBtnBtn}
