@@ -14,6 +14,7 @@ import CanvasImg from "../assets/pictures/canvas.png";
 import { useState, useEffect } from "react";
 import { meetingService } from "../modules/meeting/services";
 import { apiConfig, frontendUrl } from "../config/api";
+import { GithubRepoBadge } from "../shared/components/GithubRepoBadge";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -154,10 +155,12 @@ const LandingPage = (props: Props) => {
         <Toolbar>
           <NettuLogoWithLabel label="Nettu Meet" />
           <div className={classes.appbarEnd}>
+            <GithubRepoBadge />
             <Button
               onClick={() => (window.location.href = apiConfig.docsUrl)}
               size="small"
               style={{
+                marginLeft: "24px",
                 fontWeight: 500,
               }}
             >
