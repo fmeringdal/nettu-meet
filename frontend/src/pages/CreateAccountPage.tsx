@@ -39,15 +39,20 @@ const useStyles = makeStyles((theme) =>
     dialog: {
       padding: "24px 20px",
       borderTop: "4px solid " + theme.palette.primary.main,
-      width: "450px",
+      width: "490px",
+      boxSizing: "border-box",
+      maxWidth: "95%",
     },
     loadingdialog: {
-      width: "450px",
+      width: "490px",
       height: "500px",
+      maxWidth: "95%",
     },
     paperSuccess: {
-      width: "450px",
+      width: "490px",
+      maxWidth: "95%",
       padding: "24px 20px",
+      boxSizing: "border-box",
       borderTop: "4px solid " + theme.palette.success.main,
     },
     errorText: {

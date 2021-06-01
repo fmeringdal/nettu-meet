@@ -6,13 +6,15 @@ import {
   makeStyles,
   Toolbar,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from "@material-ui/core";
 import { VideoCall } from "@material-ui/icons";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { NettuLogoWithLabel } from "../shared/components/NettuLogoWithLabel";
 import VideoModusImg from "../assets/pictures/videomodus.png";
 import CanvasImg from "../assets/pictures/canvas.png";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { meetingService } from "../modules/meeting/services";
 import { apiConfig, frontendUrl } from "../config/api";
 import { GithubRepoBadge } from "../shared/components/GithubRepoBadge";
@@ -122,6 +124,10 @@ const LandingPage = (props: Props) => {
   const classes = useStyles();
 
   const [imageIndex, setImageIndex] = useState(0);
+  const theme = useTheme();
+
+  const isMobileQuery = theme.breakpoints.down("xs");
+  const isMobile = useMediaQuery(isMobileQuery);
 
   useEffect(() => {
     const i = setInterval(() => {
@@ -158,25 +164,29 @@ const LandingPage = (props: Props) => {
           <NettuLogoWithLabel label="Nettu Meet" />
           <div className={classes.appbarEnd}>
             <GithubRepoBadge />
-            <Button
-              onClick={() => (window.location.href = apiConfig.docsUrl)}
-              size="small"
-              style={{
-                marginLeft: "24px",
-                fontWeight: 500,
-              }}
-            >
-              Documentation
-            </Button>
-            <div className={classes.divider}></div>
-            <Button
-              variant="contained"
-              color="primary"
-              size="small"
-              onClick={() => props.history.push("/create")}
-            >
-              GET STARTED
-            </Button>
+            {!isMobile && (
+              <Fragment>
+                <Button
+                  onClick={() => (window.location.href = apiConfig.docsUrl)}
+                  size="small"
+                  style={{
+                    marginLeft: "24px",
+                    fontWeight: 500,
+                  }}
+                >
+                  Documentation
+                </Button>
+                <div className={classes.divider}></div>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="small"
+                  onClick={() => props.history.push("/create")}
+                >
+                  GET STARTED
+                </Button>
+              </Fragment>
+            )}
           </div>
         </Toolbar>
       </AppBar>
@@ -188,9 +198,19 @@ const LandingPage = (props: Props) => {
             boxSizing: "border-box",
             width: "100%",
             maxWidth: "1550px",
+            height: "100%",
+            overflowY: "auto",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <Grid container spacing={3}>
+          <Grid
+            container
+            spacing={3}
+            alignItems="center"
+            style={{ height: "100%" }}
+          >
             <Grid item md={5}>
               <div className={classes.left}>
                 <Typography className={classes.title}>
@@ -244,6 +264,15 @@ const LandingPage = (props: Props) => {
                       <Typography>New meeting</Typography>
                     </div>
                   </button>
+                  {isMobile && (
+                    <Button
+                      variant="outlined"
+                      onClick={() => props.history.push("/create")}
+                      style={{ height: "58px" }}
+                    >
+                      Create account
+                    </Button>
+                  )}
                 </div>
               </div>
             </Grid>
