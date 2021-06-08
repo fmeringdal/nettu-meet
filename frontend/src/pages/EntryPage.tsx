@@ -126,7 +126,7 @@ const EntryPage = (props: Props) => {
           "microsoft edge": ">18",
         },
         safari: ">12",
-        // 'firefox': '>=60',
+        firefox: ">=60",
         chrome: ">=74",
         chromium: ">=74",
         opera: ">=62",
