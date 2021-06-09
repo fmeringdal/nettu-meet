@@ -123,7 +123,6 @@ const EntryPage = (props: Props) => {
       const supportedBrowsers = {
         windows: {
           "internet explorer": ">12",
-          "microsoft edge": ">18",
         },
         safari: ">12",
         firefox: ">=60",
@@ -131,6 +130,7 @@ const EntryPage = (props: Props) => {
         chromium: ">=74",
         opera: ">=62",
         "samsung internet for android": ">=11.1.1.52",
+        "Microsoft Edge": ">18",
       };
       // Get current device.
       const device = deviceInfo();
