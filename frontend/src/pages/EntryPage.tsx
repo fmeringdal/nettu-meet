@@ -92,7 +92,7 @@ function deviceInfo() {
     platform: browser.getPlatformType(true), // mobile, desktop, tablet
     name: browser.getBrowserName(true),
     version: browser.getBrowserVersion(),
-    bowser: browser,
+    browser,
   };
 }
 
@@ -144,7 +144,7 @@ const EntryPage = (props: Props) => {
           device
         );
         throw "Webrtc not supported";
-      } else if (!device.bowser.satisfies(supportedBrowsers)) {
+      } else if (!device.browser.satisfies(supportedBrowsers)) {
         console.error(
           'Your browser is not supported [deviceInfo:"%o"]',
           device
