@@ -161,6 +161,11 @@ const EntryPage = (props: Props) => {
         throw "Bad device";
       }
     } catch (error) {
+      const urlSearchParams = new URLSearchParams(window.location.search);
+      const params = Object.fromEntries(urlSearchParams.entries());
+      if (params.ignoreBrowser) {
+        return;
+      }
       setError((error) => ({
         ...error,
         browser: true,

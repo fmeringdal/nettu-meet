@@ -13,13 +13,10 @@ COPY tsconfig.json .
 COPY src src
 RUN npm install
 
-# EXPOSE 5000
-# EXPOSE 40000-49000
-# EXPOSE 2000-2200
-
 ENV NETTU_REDIS_HOST="host.docker.internal"
 ENV NETTU_REDIS_PORT=6379
 ENV MONGODB_CONNECTION_STRING=mongodb://root:rootpassword@host.docker.internal:27017
+ENV MONGODB_NAME=nettu-meeting
 
 
 CMD npm run start
