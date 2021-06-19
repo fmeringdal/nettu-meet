@@ -26,7 +26,7 @@
 
 ## Live demo
 
-Currently offline
+Currently offline for cost saving
 [Live demo](https://meet.nettubooking.com) 
 
 ## Run it locally
