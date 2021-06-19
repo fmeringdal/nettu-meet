@@ -164,6 +164,7 @@ const EntryPage = (props: Props) => {
       const urlSearchParams = new URLSearchParams(window.location.search);
       const params = Object.fromEntries(urlSearchParams.entries());
       if (params.ignoreBrowser) {
+        meetingInteractor.moveToMeetingLobby();
         return;
       }
       setError((error) => ({

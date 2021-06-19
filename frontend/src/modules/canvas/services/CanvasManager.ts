@@ -80,6 +80,13 @@ export class CanvasManager extends EventEmitter {
     this.on(CANVAS_TOPICS.OBJECT_MODIFIED, () => this.onStateChange());
     this.on(CANVAS_TOPICS.OBJECT_ADDED, () => this.onStateChange());
     this.on(CANVAS_TOPICS.OBJECT_REMOVED, () => this.onStateChange());
+
+    window.onresize = () => {
+      const canvas = this.getCanvas();
+      canvas.setWidth(window.innerWidth - 400);
+      canvas.setHeight(window.innerHeight - 96);
+      canvas.calcOffset();
+    };
   };
 
   private onStateChange = () => {
