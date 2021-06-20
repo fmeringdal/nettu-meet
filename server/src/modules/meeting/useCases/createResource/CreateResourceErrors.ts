@@ -25,4 +25,12 @@ export namespace CreateResourceUseCaseErrors {
             } as UseCaseError);
         }
     }
+
+    export class ResourceUploadNotSupportedError extends Result<UseCaseError> {
+        constructor() {
+            super(false, {
+                message: `Resource upload is not supported on this server.`,
+            } as UseCaseError);
+        }
+    }
 }
