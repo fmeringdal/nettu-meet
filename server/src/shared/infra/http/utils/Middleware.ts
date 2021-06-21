@@ -20,12 +20,12 @@ export class Middleware {
                 : '';
 
             if (!apiKey) {
-                this.endRequest(403, 'Invalid secret api key provided', res);
+                return this.endRequest(403, 'Invalid secret api key provided', res);
             }
 
             const account = await this.accountRepo.getAccountBySecretKey(apiKey);
             if (!account) {
-                this.endRequest(403, 'Invalid secret api key provided', res);
+                return this.endRequest(403, 'Invalid secret api key provided', res);
             }
 
             (req as DecodedExpressRequest).decoded = {
