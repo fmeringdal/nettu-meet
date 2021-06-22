@@ -96,6 +96,7 @@ export const PeerVideo = (props: Props) => {
       <audio
         playsInline
         ref={mediaPlayerRef}
+        muted={isMe}
         autoPlay
       />
       {isMicActive ? null : (
