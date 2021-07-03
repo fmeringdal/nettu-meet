@@ -1,8 +1,8 @@
 name: server
 on:
   push:
-    # paths:
-    #   - "server/**"
+    paths:
+      - "server/**"
     branches:
       - main
 
