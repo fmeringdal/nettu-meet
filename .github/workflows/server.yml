@@ -29,6 +29,5 @@ jobs:
           aws-region: eu-west-1
       - name: Upload artifacts
         run: |
-          ls -l
           cd server  
           aws s3 cp server-ubuntu-20.4.zip s3://nettu-meet-code-artifacts/server-ubuntu-20.4.zip --acl public-read
