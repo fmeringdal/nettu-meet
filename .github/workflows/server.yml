@@ -20,7 +20,7 @@ jobs:
           npm install
           tsc
           cp src/docs/swagger.yaml dist/docs/swagger.yaml
-          zip -r server-ubuntu-20.4.zip dist
+          zip -r server-ubuntu-20.4.zip .
       - name: Configure AWS credentials from Test account
         uses: aws-actions/configure-aws-credentials@v1
         with:
