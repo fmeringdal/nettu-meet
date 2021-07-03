@@ -82,10 +82,12 @@ export class CanvasManager extends EventEmitter {
     this.on(CANVAS_TOPICS.OBJECT_REMOVED, () => this.onStateChange());
 
     window.onresize = () => {
-      const canvas = this.getCanvas();
-      canvas.setWidth(window.innerWidth - 400);
-      canvas.setHeight(window.innerHeight - 96);
-      canvas.calcOffset();
+      const canvas = this.canvas;
+      if(canvas){
+        canvas.setWidth(window.innerWidth - 400);
+        canvas.setHeight(window.innerHeight - 96);
+        canvas.calcOffset();
+      }
     };
   };
 

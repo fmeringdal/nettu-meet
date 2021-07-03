@@ -36,6 +36,8 @@ export class CreateResourceController extends BaseController<BodySchema, PathPar
                         return res.forbidden(e.message);
                     case CreateResourceUseCaseErrors.MeetingNotFoundError:
                         return res.notFound(e.message);
+                    case CreateResourceUseCaseErrors.ResourceUploadNotSupportedError:
+                        return res.forbidden(e.message);
                     case CreateResourceUseCaseErrors.CanvasNotFoundError:
                         return res.notFound(e.message);
                     default:

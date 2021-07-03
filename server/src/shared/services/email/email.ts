@@ -80,7 +80,8 @@ export class EmailService implements IEmailService {
 
     async isDisposable(email: string) {
         try {
-            const res = await fetch(`https://open.kickbox.com/v1/disposable/${email}`);
+            const domain = email.split("@").pop();
+            const res = await fetch(`https://open.kickbox.com/v1/disposable/${domain}`);
             const data = await res.json();
             const disposable = data.disposable;
             return disposable;

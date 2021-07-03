@@ -1,3 +1,4 @@
+import { awsConfig } from '../../../../config';
 import { AppError } from '../../../../shared/core/AppError';
 import { Either, left, right } from '../../../../shared/core/Result';
 import { UseCase } from '../../../../shared/core/UseCase';
@@ -38,6 +39,10 @@ export class CreateResourceUseCase implements UseCase<CreateResourceDTO, Promise
 
             if (request.canvasId && !meeting.canvasIds.map((id) => id.toString()).includes(request.canvasId)) {
                 return left(new CreateResourceUseCaseErrors.CanvasNotFoundError(request.meetingId, request.canvasId));
+            }
+
+            if (!awsConfig.mediaBucket) {
+                return left(new CreateResourceUseCaseErrors.ResourceUploadNotSupportedError());
             }
 
             const resourceId = new UniqueEntityID();

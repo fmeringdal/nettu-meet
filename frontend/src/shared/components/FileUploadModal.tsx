@@ -99,7 +99,9 @@ export const FileUploadModal = (props: Props) => {
         );
         const resource = res.getValue().resource;
         resources.push(resource);
-      } catch (error) {}
+      } catch (error) {
+        alert(error?.response?.data?.message);
+      }
     }
     props.onDone({
       uploadedResources: resources,
