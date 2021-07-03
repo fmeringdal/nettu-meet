@@ -1,27 +1,33 @@
 name: server
 on:
   push:
-    paths:
-      - "server/**"
+    # paths:
+    #   - "server/**"
     branches:
       - main
 
 jobs:
   build:
     name: Build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
-      - name: Deploy server using ssh
-        uses: appleboy/ssh-action@master
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
-          host: ${{ secrets.SERVER_HOST_IP }}
-          username: root
-          password: ${{ secrets.SSH_PASSWORD }}
-          script: |
-            cd nettu-meet/server
-            git pull
-            npm i
-            rm integrations/.env
-            cp ~/.env integrations/.env
-            systemctl stop nettu-meeting
-            systemctl start nettu-meeting
+          node-version: "14"
+      - run: |
+          cd server
+          npm install
+          tsc
+          cp src/docs/swagger.yaml dist/docs/swagger.yaml
+          zip -r server-ubuntu-20.4.zip dist
+      - name: Configure AWS credentials from Test account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: us-east-1
+      - name: Upload artifacts
+        run: |
+          cd server  
+          aws s3 cp server-ubuntu-20.4.zip s3://nettu-meet-artifacts/server-ubuntu-20.4.zip
