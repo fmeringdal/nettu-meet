@@ -20,6 +20,7 @@
     "fabric": "^4.2.0",
     "function-plot": "^1.22.2",
     "hark": "^1.2.3",
+    "material-ui-color": "^1.2.0",
     "mediasoup-client": "^3.6.29",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
