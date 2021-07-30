@@ -1,5 +1,5 @@
 import { createStyles, makeStyles } from "@material-ui/core";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { meetingInteractor } from "../../meeting/interactors";
 import { meetingState } from "../../meeting/state/meeting";
 import { canvasManager, CANVAS_ELEMENT_ID } from "../services/CanvasManager";
@@ -20,6 +20,8 @@ interface Props {
 
 export const Canvas = (props: Props) => {
   const classes = useStyles();
+  const [width, setWidth] = React.useState(props.width);
+  const [height, setHeight] = React.useState(props.height);
 
   const { meeting } = meetingState();
 
@@ -50,11 +52,7 @@ export const Canvas = (props: Props) => {
         height: props.height + "px",
       }}
     >
-      <canvas
-        id={CANVAS_ELEMENT_ID}
-        width={props.width}
-        height={props.height}
-      ></canvas>
+      <canvas id={CANVAS_ELEMENT_ID} width={width} height={height}></canvas>
     </div>
   );
 };
