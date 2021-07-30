@@ -318,7 +318,7 @@ export const useLocalStreams = create<LocalStreamsStore>((set, get) => ({
       });
     } catch (error) {
       console.log(error);
-      alert("Unable top capture audio");
+      alert("Unable to capture audio");
     }
   },
   muteWebcam() {
@@ -356,7 +356,7 @@ export const useLocalStreams = create<LocalStreamsStore>((set, get) => ({
       });
     } catch (error) {
       console.log(error);
-      alert("Unable top capture webcam");
+      alert("Unable to capture webcam");
     }
   },
   muteScreen() {
