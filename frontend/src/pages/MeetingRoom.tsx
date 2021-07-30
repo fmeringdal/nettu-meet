@@ -22,6 +22,7 @@ import MicIcon from "@material-ui/icons/MicOutlined";
 import MicOffIcon from "@material-ui/icons/MicOffRounded";
 import ScreenShareIcon from "@material-ui/icons/ScreenShareOutlined";
 import StopScreenShareIcon from "@material-ui/icons/StopScreenShareOutlined";
+import SettingsIcon from "@material-ui/icons/SettingsOutlined";
 import { Timer } from "../shared/components/Timer";
 import { CanvasToolbar } from "../modules/canvas/components/CanvasToolbar";
 import { Canvas } from "../modules/canvas/components/Canvas";
@@ -39,6 +40,7 @@ import { useLayoutState } from "../shared/services/layout/layout";
 import { darkTheme } from "../shared/services/theme/darkTheme";
 import { lightTheme } from "../shared/services/theme/lightTheme";
 import { useLocalStreams } from "../modules/media/state/state";
+import { DeviceSelectPopover } from "../shared/components/DeviceSelectPopover";
 
 interface Props extends RouteComponentProps<{ meetingId: string }> {}
 
@@ -106,6 +108,8 @@ const MeetingRoom = (props: Props) => {
 
   const [s, setS] = useState(Math.random());
 
+  const [devicesAnchorEl, setDevicesAnchorEl] = useState<any>(null);
+
   const {
     config,
     muteAudio,
@@ -164,6 +168,17 @@ const MeetingRoom = (props: Props) => {
               />
             )}
           </Button>
+          <Button
+            variant="contained"
+            onClick={(e) => setDevicesAnchorEl(e.currentTarget)}
+          >
+            <SettingsIcon />
+          </Button>
+          <DeviceSelectPopover
+            anchorEl={devicesAnchorEl}
+            open={Boolean(devicesAnchorEl)}
+            onClose={() => setDevicesAnchorEl(undefined)}
+          />
         </ButtonGroup>
         <Box display="flex" alignItems="center" justifyContent="flex-end">
           {videoMode && (
