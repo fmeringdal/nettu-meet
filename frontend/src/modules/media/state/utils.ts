@@ -39,7 +39,7 @@ window.addEventListener("unload", () => sig("leave", {}));
 //
 // meeting control actions
 //
-export const joinRoom = async (roomId: string) => {
+export const joinRoom = async (roomId: string, name: string) => {
   const { joined, join } = useRoomStore.getState();
   if (joined) {
     return;
@@ -56,6 +56,7 @@ export const joinRoom = async (roomId: string) => {
     recvTransportOptions,
   } = await sig("join-as-new-peer", {
     roomId,
+    name,
   });
 
   const success = await useDeviceStore.getState().init(routerRtpCapabilities);
@@ -273,8 +274,8 @@ const setupSignallingListeners = (roomId: string) => {
 
   // New
   signalingChannel.on("newPeer", (data: any) => {
-    const { peerId } = data;
-    useRoomStore.getState().addNewPeer(peerId);
+    const { peerId, name } = data;
+    useRoomStore.getState().addNewPeer(peerId, name);
   });
   signalingChannel.on("peerClosed", (data: any) => {
     const { peerId } = data;

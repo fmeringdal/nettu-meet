@@ -6,6 +6,7 @@ interface PeerMedia {
 }
 export interface Peer {
   id: string;
+  name: string;
   joinTs: number;
   lastSeenTs: number;
   media: Record<string, PeerMedia>;

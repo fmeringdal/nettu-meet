@@ -1,7 +1,7 @@
 import { makeStyles, Typography } from "@material-ui/core";
 import { MicOffRounded } from "@material-ui/icons";
 import clsx from "clsx";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback } from "react";
 import { UserAvatar } from "../../user/components/Avatar";
 import { StreamSettings } from "../state/state";
 
@@ -78,27 +78,25 @@ export const PeerVideo = (props: Props) => {
   const streamSettings: StreamSettings = props.streamSettings
     ? props.streamSettings
     : {
-      audio: false,
-      screen: false,
-      webcam: false,
-    };
+        audio: false,
+        screen: false,
+        webcam: false,
+      };
 
   const isMe = Boolean(props.isMe);
 
-  const mediaPlayerRef = useCallback(node => {
-    if (node !== null) {
-      node.srcObject = props.stream;
-    }
-  }, [props.consumerIds.join("#")]);
+  const mediaPlayerRef = useCallback(
+    (node) => {
+      if (node !== null) {
+        node.srcObject = props.stream;
+      }
+    },
+    [props.consumerIds.join("#")]
+  );
 
   const displayMicAndName = (isMicActive: boolean) => (
     <div className={classes.micAndName}>
-      <audio
-        playsInline
-        ref={mediaPlayerRef}
-        muted={isMe}
-        autoPlay
-      />
+      <audio playsInline ref={mediaPlayerRef} muted={isMe} autoPlay />
       {isMicActive ? null : (
         <div className={classes.noMic}>
           <MicOffRounded

@@ -26,7 +26,7 @@ const getNextWorker = (): Worker => {
 /**
  * Launch as many mediasoup Workers as given in the configuration file.
  */
-export async function runMediasoupWorkers() {
+export async function runMediasoupWorkers(): Promise<void> {
     for (let i = 0; i < numWorkers; ++i) {
         const worker = await createWorker({
             logLevel: config.mediasoup.worker.logLevel,
@@ -60,6 +60,7 @@ interface PeerConsumerLayer {
 
 interface Peer {
     id: string;
+    name: string;
     // socket: Socket;
     joinTs: number;
     lastSeenTs: number;

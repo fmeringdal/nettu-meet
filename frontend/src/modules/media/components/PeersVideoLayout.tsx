@@ -69,6 +69,7 @@ export const PeersVideoLayout = (props: Props) => {
           },
           isSpeaking: false,
           peerId: p.peerId,
+          name: p.name,
         },
       })),
       {
@@ -82,6 +83,7 @@ export const PeersVideoLayout = (props: Props) => {
           settings: config,
           isSpeaking: mySpeakStats.isSpeaking,
           peerId: signalingChannel.id,
+          name: "",
         },
       },
     ],
@@ -110,6 +112,7 @@ export const PeersVideoLayout = (props: Props) => {
             streamSettings={p.data.settings}
             isSpeaking={p.data.isSpeaking}
             isMe={p.isMe}
+            fullName={p.data.name}
             consumerIds={p.data.consumerIds}
             darkBackground={layout.isPresentingMode}
             border={!props.sidebarMode && layout.mainVideos.length > 1}
@@ -133,6 +136,7 @@ export const PeersVideoLayout = (props: Props) => {
                 streamSettings={p.data.settings}
                 consumerIds={p.data.consumerIds}
                 isMe={p.isMe}
+                fullName={p.data.name}
                 size={p.layout.size}
               />
             </div>

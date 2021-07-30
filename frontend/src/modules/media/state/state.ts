@@ -77,7 +77,7 @@ type RoomStore = {
   closeConsumer(consumerId: string): void;
   pauseConsumer(consumerId: string): void;
   resumeConsumer(consumerId: string): void;
-  addNewPeer(peerId: string): void;
+  addNewPeer(peerId: string, name: string): void;
   removePeer(peerId: string): void;
 };
 
@@ -158,7 +158,7 @@ export const useRoomStore = create<RoomStore>((set, get) => ({
       consumers,
     });
   },
-  addNewPeer(peerId: string) {
+  addNewPeer(peerId: string, name: string) {
     const { room } = get();
     if (peerId in room.peers) {
       return;
@@ -171,6 +171,7 @@ export const useRoomStore = create<RoomStore>((set, get) => ({
       consumerLayers: [],
       consumers: [],
       id: peerId,
+      name,
       joinTs: new Date().valueOf(),
       lastSeenTs: new Date().valueOf(),
       media: {},
@@ -199,6 +200,7 @@ export const useActivePeerConsumers = () => {
     const peerConsumers = peer.id in consumers ? consumers[peer.id] : [];
     activePeerConsumers.push({
       peerId: peer.id,
+      name: peer.name,
       consumers: peerConsumers.filter((c) => !c.closed && !c.paused),
     });
   }

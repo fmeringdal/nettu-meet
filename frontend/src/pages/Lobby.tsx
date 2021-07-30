@@ -8,7 +8,13 @@
  * - if meetingroom is private then redirect to lobby if valid code otherwise to signup page
  */
 
-import { Button, makeStyles, Paper, Tooltip } from "@material-ui/core";
+import {
+  Button,
+  makeStyles,
+  Paper,
+  Tooltip,
+  TextField,
+} from "@material-ui/core";
 import MicOffIcon from "@material-ui/icons/MicOffRounded";
 import MicIcon from "@material-ui/icons/MicOutlined";
 import VideoCamOffIcon from "@material-ui/icons/VideocamOffRounded";
@@ -137,6 +143,8 @@ const useStyles = makeStyles((theme) => ({
 
 interface Props extends RouteComponentProps {}
 
+const NAME_LOCAL_STORAGE_KEY = "nettu-meet-display-name";
+
 const Lobby = (props: Props) => {
   const classes = useStyles();
   const videoRef = useRef<any>();
@@ -152,6 +160,9 @@ const Lobby = (props: Props) => {
   } = useLocalStreams();
 
   const [stream, setStream] = useState(new MediaStream());
+  const [name, setName] = useState(
+    localStorage.getItem(NAME_LOCAL_STORAGE_KEY) || ""
+  );
 
   const [devicesAnchorEl, setDevicesAnchorEl] = useState<any>(null);
 
@@ -178,7 +189,8 @@ const Lobby = (props: Props) => {
 
   const goToMeeting = async () => {
     if (meeting) {
-      await joinRoom(meeting.id);
+      localStorage.setItem(NAME_LOCAL_STORAGE_KEY, name);
+      await joinRoom(meeting.id, name);
 
       // manually update
       useProducerStore.getState().onStreamUpdate(useLocalStreams.getState());
@@ -193,6 +205,9 @@ const Lobby = (props: Props) => {
   };
 
   const isMeetingBtnLinkActive = () => {
+    if (name.length === 0) {
+      return false;
+    }
     if (stream != null) {
       return true;
     }
@@ -287,6 +302,16 @@ const Lobby = (props: Props) => {
             ))}
           </div>
         )}
+        <TextField
+          variant="filled"
+          value={name}
+          placeholder="Your name ..."
+          onChange={(e) => setName(e.target.value)}
+          fullWidth
+          style={{
+            marginBottom: "20px",
+          }}
+        />
         <Button
           color="primary"
           // disableElevation

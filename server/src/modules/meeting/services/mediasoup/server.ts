@@ -133,7 +133,7 @@ signalingRouter.post('/sync', async (req, res) => {
 //
 signalingRouter.post('/join-as-new-peer', async (req, res) => {
     try {
-        const { peerId, room } = req.body as { peerId: string; room: RoomState };
+        const { peerId, room, name } = req.body as { peerId: string; name: string; room: RoomState };
         const now = Date.now();
         console.log('join-as-new-peer', peerId);
 
@@ -166,6 +166,7 @@ signalingRouter.post('/join-as-new-peer', async (req, res) => {
 
         room.peers[peerId] = {
             id: peerId,
+            name,
             joinTs: now,
             lastSeenTs: now,
             media: {},
@@ -175,6 +176,7 @@ signalingRouter.post('/join-as-new-peer', async (req, res) => {
 
         io.to(room.id).emit('newPeer', {
             peerId,
+            name,
         });
 
         res.send({
