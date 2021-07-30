@@ -86,8 +86,9 @@ export interface RoomState {
 // and one "room" ...
 //
 export const createRoom = async (roomId: string): Promise<RoomState> => {
-    if (rooms.has(roomId)) {
-        return rooms.get(roomId)!;
+    const existingRoom = rooms.get(roomId);
+    if (existingRoom) {
+        return existingRoom;
     }
     console.log('Creating room: ' + roomId);
 

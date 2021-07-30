@@ -135,7 +135,7 @@ describe("Video layout logic", () => {
           settings: {
             audio: true,
             screen: false,
-            video: true,
+            webcam: true,
           },
           data: undefined,
           isSpeaking: false,
@@ -167,7 +167,7 @@ describe("Video layout logic", () => {
           settings: {
             audio: true,
             screen: false,
-            video: true,
+            webcam: true,
           },
           isSpeaking: false,
           speakingCount: 0,
@@ -191,6 +191,38 @@ describe("Video layout logic", () => {
     }
   });
 
+  it("should correctly layout 7 videos and split 3,3,1 in video mode", () => {
+    for (const sidebarMode of [true, false]) {
+      const layout = getVideoLayout({
+        peerStreams: [0, 1, 2, 3, 4, 5, 6].map((i) => ({
+          isMe: i === 0,
+          settings: {
+            audio: true,
+            screen: false,
+            webcam: true,
+          },
+          isSpeaking: false,
+          speakingCount: 0,
+          data: undefined,
+        })),
+        sidebarMode,
+        size: {
+          width: 100,
+          height: 100,
+        },
+      });
+
+      expect(layout.mainVideos.length).toBe(5);
+      expect(layout.bottomVideos.length).toBe(0);
+      for (const v of layout.mainVideos) {
+        expect(sizeToFixed(v.layout.size)).toEqual({
+          width: "33.3",
+          height: "33.3",
+        });
+      }
+    }
+  });
+
   it("should just use mainvideos place when 9 videos and split 3x3", () => {
     for (const sidebarMode of [true, false]) {
       const layout = getVideoLayout({
@@ -199,7 +231,7 @@ describe("Video layout logic", () => {
           settings: {
             audio: true,
             screen: false,
-            video: true,
+            webcam: true,
           },
           data: undefined,
           isSpeaking: false,
@@ -231,7 +263,7 @@ describe("Video layout logic", () => {
           settings: {
             audio: true,
             screen: false,
-            video: true,
+            webcam: true,
           },
           data: undefined,
           isSpeaking: false,
@@ -269,7 +301,7 @@ describe("Video layout logic", () => {
           settings: {
             audio: true,
             screen: i === 2,
-            video: false,
+            webcam: false,
           },
           isSpeaking: false,
           speakingCount: 0,
@@ -308,7 +340,7 @@ describe("Video layout logic", () => {
           settings: {
             audio: true,
             screen: i === 2 || i === 5,
-            video: false,
+            webcam: false,
           },
           isSpeaking: false,
           speakingCount: 0,

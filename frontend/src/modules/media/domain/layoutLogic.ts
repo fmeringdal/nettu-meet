@@ -93,7 +93,7 @@ export function getVideoLayout<T>(
   } else {
     const peersCount = req.peerStreams.length;
     let counter = 0;
-    let peersPerRow = peersCount >= 9 ? 3 : peersCount > 1 ? 2 : 1;
+    let peersPerRow = peersCount >= 7 ? 3 : peersCount > 1 ? 2 : 1;
     let peersPerColumn = peersCount >= 5 ? 3 : peersCount > 2 ? 2 : 1;
     if (req.sidebarMode && peersCount === 2) {
       peersPerColumn = 2;
