@@ -13,16 +13,22 @@ import MicOffIcon from "@material-ui/icons/MicOffRounded";
 import MicIcon from "@material-ui/icons/MicOutlined";
 import VideoCamOffIcon from "@material-ui/icons/VideocamOffRounded";
 import VideoCamIcon from "@material-ui/icons/VideocamOutlined";
+import SettingsIcon from "@material-ui/icons/SettingsOutlined";
 import clsx from "clsx";
 import { useEffect, useRef, useState } from "react";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { chatInteractor } from "../modules/chat/interactors/chatInteractor";
 import { useSoundMeter } from "../modules/media/services/SoundMeter";
-import { useLocalStreams } from "../modules/media/state/state";
+import {
+  requestPermissions,
+  useLocalStreams,
+  useProducerStore,
+} from "../modules/media/state/state";
 import { joinRoom } from "../modules/media/state/utils";
 import { meetingInteractor } from "../modules/meeting/interactors";
 import { meetingState } from "../modules/meeting/state/meeting";
 import { NettuLogoWithLabel } from "../shared/components/NettuLogoWithLabel";
+import { DeviceSelectPopover } from "../shared/components/DeviceSelectPopover";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -123,6 +129,10 @@ const useStyles = makeStyles((theme) => ({
     borderColor: theme.palette.primary.main,
     backgroundColor: theme.palette.primary.main,
   },
+  settings: {
+    borderColor: theme.palette.grey[600],
+    backgroundColor: theme.palette.grey[600],
+  },
 }));
 
 interface Props extends RouteComponentProps {}
@@ -131,52 +141,48 @@ const Lobby = (props: Props) => {
   const classes = useStyles();
   const videoRef = useRef<any>();
 
-  const [config, setConfig] = useState({
-    audio: false,
-    video: false,
-  });
+  const {
+    audio,
+    webcam,
+    config,
+    muteAudio,
+    unmuteAudio,
+    muteWebcam,
+    unmuteWebcam,
+  } = useLocalStreams();
+
   const [stream, setStream] = useState(new MediaStream());
 
+  const [devicesAnchorEl, setDevicesAnchorEl] = useState<any>(null);
+
   useEffect(() => {
-    const getStream = async () => {
-      try {
-        if (config.audio || config.video) {
-          const stream = await navigator.mediaDevices.getUserMedia({
-            audio: config.audio,
-            video: config.video,
-          });
-          setStream(stream);
-        } else {
-          setStream(new MediaStream());
-        }
-      } catch (error) {
-        alert("Unable to get media stream");
-      }
-    };
-    getStream();
-  }, [config]);
+    // replace stream object to update soundmeter
+    const mediaStream = new MediaStream();
+    if (config.audio) {
+      mediaStream.addTrack(audio.getTracks()[0]);
+    }
+    setStream(mediaStream);
+  }, [config.audio]);
+
+  useEffect(() => {
+    videoRef.current.srcObject = webcam;
+  }, [config.webcam]);
+
+  useEffect(() => {
+    requestPermissions();
+  }, []);
 
   const { meeting } = meetingState();
 
   const soundMeter = useSoundMeter(stream);
 
-  useEffect(() => {
-    if (videoRef && videoRef.current) {
-      videoRef.current.srcObject = stream;
-    }
-  }, [stream]);
-
   const goToMeeting = async () => {
     if (meeting) {
       await joinRoom(meeting.id);
 
-      const { unmuteAudio, unmuteWebcam } = useLocalStreams.getState();
-      if (config.audio) {
-        await unmuteAudio();
-      }
-      if (config.video) {
-        await unmuteWebcam();
-      }
+      // manually update
+      useProducerStore.getState().onStreamUpdate(useLocalStreams.getState());
+
       chatInteractor.setup();
       meetingInteractor.moveToMeetingRoom();
     } else {
@@ -190,7 +196,7 @@ const Lobby = (props: Props) => {
     if (stream != null) {
       return true;
     }
-    return !config.audio && !config.video;
+    return !config.audio && !config.webcam;
   };
 
   const soundTickers = new Array(100);
@@ -228,7 +234,7 @@ const Lobby = (props: Props) => {
               className={clsx(classes.control, {
                 [classes.controlEnabled]: config.audio,
               })}
-              onClick={() => setConfig({ ...config, audio: !config.audio })}
+              onClick={() => (config.audio ? muteAudio() : unmuteAudio())}
             >
               {config.audio ? <MicIcon /> : <MicOffIcon />}
             </div>
@@ -240,13 +246,30 @@ const Lobby = (props: Props) => {
           >
             <div
               className={clsx(classes.control, {
-                [classes.controlEnabled]: config.video,
+                [classes.controlEnabled]: config.webcam,
               })}
-              onClick={() => setConfig({ ...config, video: !config.video })}
+              onClick={() => (config.webcam ? muteWebcam() : unmuteWebcam())}
             >
-              {config.video ? <VideoCamIcon /> : <VideoCamOffIcon />}
+              {config.webcam ? <VideoCamIcon /> : <VideoCamOffIcon />}
             </div>
           </Tooltip>
+
+          <Tooltip placement="bottom" title={"Switch input device"}>
+            <div
+              className={clsx(classes.control, classes.settings)}
+              onClick={(e) => {
+                setDevicesAnchorEl(e.currentTarget);
+                requestPermissions();
+              }}
+            >
+              <SettingsIcon />
+            </div>
+          </Tooltip>
+          <DeviceSelectPopover
+            anchorEl={devicesAnchorEl}
+            open={Boolean(devicesAnchorEl)}
+            onClose={() => setDevicesAnchorEl(undefined)}
+          />
         </div>
         {config.audio && (
           <div className="flex-center" style={{ margin: "20px" }}>
