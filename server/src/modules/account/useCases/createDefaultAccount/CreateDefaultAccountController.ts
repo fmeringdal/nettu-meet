@@ -1,5 +1,6 @@
 import { CreateDefaultAccountUseCase } from './CreateDefaultAccountUseCase';
 import { createDefaultAccountBodySchema, CreateDefaultAccountDTO } from './CreateDefaultAccountDTO';
+import {logger} from "../../../../logger"
 
 export class CreateDefaultAccountController {
     private useCase: CreateDefaultAccountUseCase;
@@ -26,14 +27,12 @@ export class CreateDefaultAccountController {
             const result = await this.useCase.execute(dto);
 
             if (result.isLeft()) {
-                console.error('Unable to create default account');
-                console.error(result.value.errorValue());
+                logger.error({error : result.value.errorValue()}, 'Unable to create default account');
             } else {
-                console.log('Default account created or already exists');
+                logger.info('Default account created or already exists');
             }
         } catch (err) {
-            console.error('Unable to create default account');
-            console.error(err);
+            logger.error({error : err},'Unable to create default account');
         }
     }
 }

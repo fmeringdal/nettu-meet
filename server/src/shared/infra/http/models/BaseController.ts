@@ -2,6 +2,7 @@ import * as express from 'express';
 import Joi from 'joi';
 import { Account } from '../../../../modules/account/domain/account';
 import { DecodedExpressRequest } from './decodedRequest';
+import { logger } from "../../../../logger"
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export interface NettuAppRequest<B = {}, P = {}> {
@@ -51,8 +52,7 @@ export abstract class BaseController<B = {}, P = {}> {
         try {
             this.executeImpl(nettuReq, res);
         } catch (error) {
-            console.log(`[BaseController]: Uncaught controller error`);
-            console.log(error);
+            logger.error({error : error},`[BaseController]: Uncaught controller error`);
             res.fail();
         }
     }

@@ -4,6 +4,7 @@ import { BaseWSController } from '../../../../shared/infra/http/models/BaseWSCon
 import { ChatMessageMap } from '../../mappers/chatMessageMap';
 import { PayloadSchema, payloadSchema, SendChatMessageDTO } from './SendChatMessageDTO';
 import { SendChatMessageUseCase } from './SendChatMessageUseCase';
+import { logger } from "../../../../logger"
 
 export class SendChatMessageController extends BaseWSController {
     private useCase: SendChatMessageUseCase;
@@ -30,7 +31,7 @@ export class SendChatMessageController extends BaseWSController {
 
             if (result.isLeft()) {
                 const error = result.value;
-                console.log(error);
+                logger.error({error : error}, "error");
                 // switch (error.constructor) {
                 //   case SendChatMessageUseCaseErrors.ChatNotFoundError:
                 //     return this.notFound(res, error.errorValue().message);
@@ -46,7 +47,7 @@ export class SendChatMessageController extends BaseWSController {
                 });
             }
         } catch (err) {
-            console.log(err);
+            logger.error({error : err});
             //   return this.fail(res, err);
         }
     }

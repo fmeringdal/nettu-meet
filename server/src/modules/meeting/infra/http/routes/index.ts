@@ -15,6 +15,7 @@ import { getMeetingController } from '../../../useCases/getMeeting';
 import { setActiveCanvasController } from '../../../useCases/setActiveCanvas';
 import { setCanvasDataController } from '../../../useCases/setCanvasData';
 import { updateMeetingController } from '../../../useCases/updateMeeting';
+import {logger} from "../../../../../logger"
 
 const meetingRouter = express.Router();
 
@@ -42,7 +43,7 @@ meetingRouter.get('/canvas/:canvasId', (req, res) => getCanvasController.execute
 
 const meetingSocketHandler = (socket: Socket) => {
     socket.on('join-room', async (meetingId) => {
-        console.log('socket: ' + socket.id + ', joined room: ' + meetingId);
+        logger.info({socketId : socket.id, meetingId : meetingId}, 'socket: ' + socket.id + ', joined room: ' + meetingId);
 
         socket.join(meetingId);
         socket.broadcast.to(meetingId).emit('user-connected', socket.id);

@@ -4,6 +4,7 @@ import { io } from '../../../../shared/infra/http/app';
 import { meetingRepo } from '../../repos';
 import { config } from './config';
 import { createRoom, rooms, RoomState, runMediasoupWorkers } from './rooms';
+import { logger } from "../../../../logger"
 
 export const signalingRouter = express.Router();
 
@@ -64,13 +65,12 @@ export const signalingRouter = express.Router();
 
 async function main() {
     // start mediasoup
-    console.log('starting mediasoup');
+    logger.info('starting mediasoup');
     try {
         await runMediasoupWorkers();
     } catch (error) {
-        console.log('unable to start mediasoup workers ...');
-        console.error(error);
-        console.log('unable to start mediasoup workers ... [exiting]');
+        logger.error({error : error}, 'unable to start mediasoup workers ...');
+        logger.info('unable to start mediasoup workers ... [exiting]');
         // process.exit(1);
     }
 }
@@ -120,7 +120,7 @@ signalingRouter.post('/sync', async (req, res) => {
             activeSpeaker: room.activeSpeaker,
         });
     } catch (e) {
-        console.error(e.message);
+        logger.error(e.message);
         res.send({ error: e.message });
     }
 });
@@ -135,7 +135,7 @@ signalingRouter.post('/join-as-new-peer', async (req, res) => {
     try {
         const { peerId, room, name } = req.body as { peerId: string; name: string; room: RoomState };
         const now = Date.now();
-        console.log('join-as-new-peer', peerId);
+        logger.info({peerId : peerId}, 'join-as-new-peer', peerId);
 
         const sendTransport = await createWebRtcTransport({
             peerId,
@@ -185,7 +185,7 @@ signalingRouter.post('/join-as-new-peer', async (req, res) => {
             recvTransportOptions,
         });
     } catch (e) {
-        console.error('error in /join-as-new-peer', e);
+        logger.error({error:e},'error in /join-as-new-peer');
         res.send({ error: e });
     }
 });
@@ -197,7 +197,7 @@ signalingRouter.post('/join-as-new-peer', async (req, res) => {
 signalingRouter.post('/init-consumers', async (req, res) => {
     try {
         const { peerId, room } = req.body as { peerId: string; room: RoomState };
-        console.log('init-consumers', peerId);
+        logger.info({peerId:peerId},'init-consumers');
 
         room.producers.forEach((producer) => {
             if (producer.appData.peerId !== peerId) {
@@ -214,7 +214,7 @@ signalingRouter.post('/init-consumers', async (req, res) => {
 
         res.send({});
     } catch (e) {
-        console.error('error in /join-as-new-peer', e);
+        logger.error({error : e}, 'error in /join-as-new-peer');
         res.send({ error: e });
     }
 });
@@ -227,18 +227,18 @@ signalingRouter.post('/init-consumers', async (req, res) => {
 signalingRouter.post('/leave', async (req, res) => {
     try {
         const { peerId, room } = req.body as { peerId: string; room: RoomState };
-        console.log('leave', peerId);
+        logger.info({peerId : peerId}, 'leave');
 
         closePeer(peerId, room);
         res.send({ left: true });
     } catch (e) {
-        console.error('error in /leave', e);
+        logger.error({error : e}, 'error in /leave');
         res.send({ error: e });
     }
 });
 
 export function closePeer(peerId: string, room: RoomState) {
-    console.log('closing peer', peerId);
+    logger.info({peerId : peerId},'closing peer %s', peerId);
     for (const [id, transport] of Object.entries(room.transports)) {
         if (transport.appData.peerId === peerId) {
             closeTransport(transport, room);
@@ -249,7 +249,7 @@ export function closePeer(peerId: string, room: RoomState) {
         peerId,
     });
     if (Object.values(room.peers).length === 0) {
-        console.log('removing room as all peers have left');
+        logger.info('removing room as all peers have left');
         // No peers left, clean up room
         room.router.close();
         room.audioLevelObserver.close();
@@ -259,7 +259,7 @@ export function closePeer(peerId: string, room: RoomState) {
 
 async function closeTransport(transport: WebRtcTransport, room: RoomState) {
     try {
-        console.log('closing transport', transport.id, transport.appData);
+        logger.info({transportId : transport.id, transportAppData : transport.appData}, 'closing transport', transport.id, transport.appData);
 
         // our producer and consumer event handlers will take care of
         // calling closeProducer() and closeConsumer() on all the producers
@@ -270,12 +270,12 @@ async function closeTransport(transport: WebRtcTransport, room: RoomState) {
         // our roomState data structure
         delete room.transports[transport.id];
     } catch (e) {
-        console.error(e);
+        logger.error({error : e}, "error");
     }
 }
 
 async function closeProducer(producer: Producer, room: RoomState) {
-    console.log('closing producer', producer.id, producer.appData);
+    logger.info({producerId : producer.id, producerAppData : producer.appData}, 'closing producer', producer.id, producer.appData);
     try {
         producer.close();
 
@@ -287,12 +287,12 @@ async function closeProducer(producer: Producer, room: RoomState) {
             delete room.peers[producer.appData.peerId].media[producer.appData.mediaTag];
         }
     } catch (e) {
-        console.error(e);
+        logger.error({error : e}, "error");
     }
 }
 
 async function closeConsumer(consumer: Consumer, room: RoomState) {
-    console.log('closing consumer', consumer.id, consumer.appData);
+    logger.info({consumerId : consumer.id, consumerAppData : consumer.appData}, 'closing consumer', consumer.id, consumer.appData);
     consumer.close();
 
     // remove this consumer from our roomState.consumers list
@@ -316,7 +316,7 @@ signalingRouter.post('/create-transport', async (req, res) => {
             direction: string;
             room: RoomState;
         };
-        console.log('create-transport', peerId, direction);
+        logger.info({peerId : peerId, direction : direction}, 'create-transport', peerId, direction);
 
         const transport = await createWebRtcTransport({ peerId, direction, room });
         room.transports[transport.id] = transport;
@@ -326,7 +326,7 @@ signalingRouter.post('/create-transport', async (req, res) => {
             transportOptions: { id, iceParameters, iceCandidates, dtlsParameters },
         });
     } catch (e) {
-        console.error('error in /create-transport', e);
+        logger.error({error : e}, 'error in /create-transport', e);
         res.send({ error: e });
     }
 });
@@ -365,17 +365,17 @@ signalingRouter.post('/connect-transport', async (req, res) => {
             transport = room.transports[transportId];
 
         if (!transport) {
-            console.error(`connect-transport: server-side transport ${transportId} not found`);
+            logger.error(`connect-transport: server-side transport ${transportId} not found`);
             res.send({ error: `server-side transport ${transportId} not found` });
             return;
         }
 
-        console.log('connect-transport', peerId, transport.appData);
+        logger.info({peerId : peerId, transportAppData : transport.appData}, 'connect-transport', peerId, transport.appData);
 
         await transport.connect({ dtlsParameters });
         res.send({ connected: true });
     } catch (e) {
-        console.error('error in /connect-transport', e);
+        logger.error({error : e}, 'error in /connect-transport', e);
         res.send({ error: e });
     }
 });
@@ -391,17 +391,17 @@ signalingRouter.post('/close-transport', async (req, res) => {
             transport = room.transports[transportId];
 
         if (!transport) {
-            console.error(`close-transport: server-side transport ${transportId} not found`);
+            logger.error(`close-transport: server-side transport ${transportId} not found`);
             res.send({ error: `server-side transport ${transportId} not found` });
             return;
         }
 
-        console.log('close-transport', peerId, transport.appData);
+        logger.info({peerId : peerId, transportAppData : transport.appData}, 'close-transport', peerId, transport.appData);
 
         await closeTransport(transport, room);
         res.send({ closed: true });
     } catch (e) {
-        console.error('error in /close-transport', e);
+        logger.error({error : e}, 'error in /close-transport', e);
         res.send({ error: e.message });
     }
 });
@@ -420,17 +420,17 @@ signalingRouter.post('/close-producer', async (req, res) => {
         const producer = room.producers.find((p) => p.id === producerId);
 
         if (!producer) {
-            console.error(`close-producer: server-side producer ${producerId} not found`);
+            logger.error(`close-producer: server-side producer ${producerId} not found`);
             res.send({ error: `server-side producer ${producerId} not found` });
             return;
         }
 
-        console.log('close-producer', peerId, producer.appData);
+        logger.info({peerId : peerId, producerAppData : producer.appData}, 'close-producer', peerId, producer.appData);
 
         await closeProducer(producer, room);
         res.send({ closed: true });
     } catch (e) {
-        console.error(e);
+        logger.error({error : e}, "error");
         res.send({ error: e.message });
     }
 });
@@ -461,7 +461,7 @@ signalingRouter.post('/send-track', async (req, res) => {
         const transport = room.transports[transportId];
 
         if (!transport) {
-            console.error(`send-track: server-side transport ${transportId} not found`);
+            logger.error(`send-track: server-side transport ${transportId} not found`);
             res.send({ error: `server-side transport ${transportId} not found` });
             return;
         }
@@ -475,7 +475,7 @@ signalingRouter.post('/send-track', async (req, res) => {
 
         // if our associated transport closes, close ourself, too
         producer.on('transportclose', () => {
-            console.log("producer's transport closed", producer.id);
+            logger.log({producerId : producer.id}, "producer's transport closed", producer.id);
             const r = rooms.get(room.id);
             if (r) {
                 closeProducer(producer, r);
@@ -509,7 +509,7 @@ signalingRouter.post('/send-track', async (req, res) => {
             });
         }
     } catch (e) {
-        console.error(e);
+        logger.error({error : e}, "error");
     }
 });
 
@@ -531,7 +531,7 @@ const createConsumer = async ({ producer, rtpCapabilities, room, mediaTag, media
         })
     ) {
         const msg = `client cannot consume ${mediaPeerId}:${mediaTag}`;
-        console.error(`recv-track: ${peerId} ${msg}`);
+        logger.error({peerId : peerId}, `recv-track: ${peerId} ${msg}`);
         return;
     }
 
@@ -541,7 +541,7 @@ const createConsumer = async ({ producer, rtpCapabilities, room, mediaTag, media
 
     if (!transport) {
         const msg = `server-side recv transport for ${peerId} not found`;
-        console.error('recv-track: ' + msg);
+        logger.error('recv-track: ' + msg);
         return;
     }
 
@@ -556,11 +556,11 @@ const createConsumer = async ({ producer, rtpCapabilities, room, mediaTag, media
     // to make sure we close and clean up consumers in all
     // circumstances
     consumer.on('transportclose', () => {
-        console.log(`consumer's transport closed`, consumer.id);
+        logger.info({consumerId : consumer.id}, `consumer's transport closed`, consumer.id);
         closeConsumer(consumer, room);
     });
     consumer.on('producerclose', () => {
-        console.log(`consumer's producer closed`, consumer.id);
+        logger.info({consumerId : consumer.id}, `consumer's producer closed`, consumer.id);
         closeConsumer(consumer, room);
         io.to(room.id).emit('consumerClosed', { consumerId: consumer.id });
     });
@@ -572,7 +572,7 @@ const createConsumer = async ({ producer, rtpCapabilities, room, mediaTag, media
     });
     // update above data structure when layer changes.
     consumer.on('layerschange', (layers) => {
-        console.log(`consumer layerschange ${mediaPeerId}->${peerId}`, mediaTag, layers);
+        logger.info({mediaTag : mediaTag, layers : layers}, `consumer layerschange ${mediaPeerId}->${peerId}`, mediaTag, layers);
         if (room.peers[peerId] && room.peers[peerId].consumerLayers[consumer.id]) {
             room.peers[peerId].consumerLayers[consumer.id].currentLayer = layers && layers.spatialLayer;
         }
@@ -663,18 +663,18 @@ signalingRouter.post('/pause-consumer', async (req, res) => {
         const consumer = room.consumers.find((c) => c.id === consumerId);
 
         if (!consumer) {
-            console.error(`pause-consumer: server-side consumer ${consumerId} not found`);
+            logger.error({consumerId : consumerId}, `pause-consumer: server-side consumer ${consumerId} not found`);
             res.send({ error: `server-side producer ${consumerId} not found` });
             return;
         }
 
-        console.log('pause-consumer', consumer.appData);
+        logger.info({consumerAppData : consumer.appData}, 'pause-consumer', consumer.appData);
 
         await consumer.pause();
 
         res.send({ paused: true });
     } catch (e) {
-        console.error('error in /pause-consumer', e);
+        logger.error({error : e}, 'error in /pause-consumer', e);
         res.send({ error: e });
     }
 });
@@ -692,19 +692,19 @@ signalingRouter.post('/resume-consumer', async (req, res) => {
         const consumer = room.consumers.find((c) => c.id === consumerId);
 
         if (!consumer) {
-            console.error(`pause-consumer: server-side consumer ${consumerId} not found`);
+            logger.error({consumerId : consumerId}, `pause-consumer: server-side consumer ${consumerId} not found`);
             res.send({ error: `server-side consumer ${consumerId} not found` });
             return;
         }
 
-        console.log('resume-consumer', consumer.appData);
-        console.log('resume-consumer-paused', consumer.paused);
+        logger.info({ consumerAppData : consumer.appData}, 'resume-consumer', consumer.appData);
+        logger.info({ consumerPaused : consumer.paused}, 'resume-consumer-paused', consumer.paused);
 
         await consumer.resume();
 
         res.send({ resumed: true });
     } catch (e) {
-        console.error('error in /resume-consumer', e);
+        logger.error({error : e}, 'error in /resume-consumer', e);
         res.send({ error: e });
     }
 });
@@ -723,7 +723,7 @@ signalingRouter.post('/close-consumer', async (req, res) => {
         const consumer = room.consumers.find((c) => c.id === consumerId);
 
         if (!consumer) {
-            console.error(`close-consumer: server-side consumer ${consumerId} not found`);
+            logger.error({consumerId : consumerId}, `close-consumer: server-side consumer ${consumerId} not found`);
             res.send({ error: `server-side consumer ${consumerId} not found` });
             return;
         }
@@ -732,7 +732,7 @@ signalingRouter.post('/close-consumer', async (req, res) => {
 
         res.send({ closed: true });
     } catch (e) {
-        console.error('error in /close-consumer', e);
+        logger.error({error : e}, 'error in /close-consumer', e);
         res.send({ error: e });
     }
 });
@@ -752,18 +752,18 @@ signalingRouter.post('/consumer-set-layers', async (req, res) => {
         const consumer = room.consumers.find((c) => c.id === consumerId);
 
         if (!consumer) {
-            console.error(`consumer-set-layers: server-side consumer ${consumerId} not found`);
+            logger.error({consumerId:consumerId}, `consumer-set-layers: server-side consumer ${consumerId} not found`);
             res.send({ error: `server-side consumer ${consumerId} not found` });
             return;
         }
 
-        console.log('consumer-set-layers', spatialLayer, consumer.appData);
+        logger.info({spatialLayer:spatialLayer, consumerAppData : consumer.appData},'consumer-set-layers', spatialLayer, consumer.appData);
 
         await consumer.setPreferredLayers({ spatialLayer });
 
         res.send({ layersSet: true });
     } catch (e) {
-        console.error('error in /consumer-set-layers', e);
+        logger.error({error : e}, 'error in /consumer-set-layers', e);
         res.send({ error: e });
     }
 });
@@ -782,12 +782,12 @@ signalingRouter.post('/pause-producer', async (req, res) => {
         const producer = room.producers.find((p) => p.id === producerId);
 
         if (!producer) {
-            console.error(`pause-producer: server-side producer ${producerId} not found`);
+            logger.error({producerId:producerId},`pause-producer: server-side producer ${producerId} not found`);
             res.send({ error: `server-side producer ${producerId} not found` });
             return;
         }
 
-        console.log('pause-producer', producer.appData);
+        logger.info({producerAppData : producer.appData}, 'pause-producer', producer.appData);
 
         await producer.pause();
 
@@ -795,7 +795,7 @@ signalingRouter.post('/pause-producer', async (req, res) => {
 
         res.send({ paused: true });
     } catch (e) {
-        console.error('error in /pause-producer', e);
+        logger.error({error : e}, 'error in /pause-producer', e);
         res.send({ error: e });
     }
 });
@@ -814,12 +814,12 @@ signalingRouter.post('/resume-producer', async (req, res) => {
         const producer = room.producers.find((p) => p.id === producerId);
 
         if (!producer) {
-            console.error(`resume-producer: server-side producer ${producerId} not found`);
+            logger.error({producerId : producerId}, `resume-producer: server-side producer ${producerId} not found`);
             res.send({ error: `server-side producer ${producerId} not found` });
             return;
         }
 
-        console.log('resume-producer', producer.appData);
+        logger.info({producerAppData : producer.appData}, 'resume-producer', producer.appData);
 
         await producer.resume();
 
@@ -827,7 +827,7 @@ signalingRouter.post('/resume-producer', async (req, res) => {
 
         res.send({ resumed: true });
     } catch (e) {
-        console.error('error in /resume-producer', e);
+        logger.error({error : e}, 'error in /resume-producer', e);
         res.send({ error: e });
     }
 });

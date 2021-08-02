@@ -6,6 +6,7 @@ import { accountRouter } from '../../../../modules/account/infra/http/routes';
 import { meetingRouter, meetingSocketHandler } from '../../../../modules/meeting/infra/http/routes';
 import { signalingRouter } from '../../../../modules/meeting/services/mediasoup';
 import { userRouter } from '../../../../modules/user/infra/http/routes';
+import { logger } from "../../../../logger"
 
 const v1Router = express.Router();
 
@@ -21,7 +22,7 @@ v1Router.use('/signaling', signalingRouter);
 v1Router.use('/docs', docsRouter);
 
 const v1SocketHandler = (socket: Socket) => {
-    console.log('user connected: ' + socket.id);
+    logger.info({socketId : socket.id},'user connected: ' + socket.id);
 
     meetingSocketHandler(socket);
 
