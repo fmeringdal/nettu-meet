@@ -1,4 +1,5 @@
 import { Result } from "../core/Result";
+import {logger} from "../../logger"
 
 function fallbackCopyTextToClipboard(text: any): Result<void> {
   var textArea = document.createElement("textarea");
@@ -16,9 +17,9 @@ function fallbackCopyTextToClipboard(text: any): Result<void> {
   try {
     var successful = document.execCommand("copy");
     var msg = successful ? "successful" : "unsuccessful";
-    console.log("Fallback: Copying text command was " + msg);
+    logger.info("Fallback: Copying text command was " + msg);
   } catch (err) {
-    console.error("Fallback: Oops, unable to copy", err);
+    logger.error({error : err}, "Fallback: Oops, unable to copy %s", err);
     return Result.fail(err);
   }
 
@@ -33,11 +34,11 @@ export async function copyTextToClipboard(text: string): Promise<Result<void>> {
   return await new Promise((res) => {
     navigator.clipboard.writeText(text).then(
       function () {
-        console.log("Async: Copying to clipboard was successful!");
+        logger.info("Async: Copying to clipboard was successful!");
         return res(Result.ok());
       },
       function (err) {
-        console.error("Async: Could not copy text: ", err);
+        logger.error({error : err}, "Async: Could not copy text: %s", err);
         return res(Result.fail(err));
       }
     );

@@ -20,6 +20,7 @@ import { meetingInteractor } from "../modules/meeting/interactors";
 import { meetingState } from "../modules/meeting/state/meeting";
 import { NettuProgress } from "../shared/components/NettuProgress";
 import bowser from "bowser";
+import {logger} from "../logger"
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -139,13 +140,13 @@ const EntryPage = (props: Props) => {
         navigator.mediaDevices.getUserMedia === undefined ||
         window.RTCPeerConnection === undefined
       ) {
-        console.error(
+        logger.error(
           'Your browser is not supported [deviceInfo:"%o"]',
           device
         );
         throw "Webrtc not supported";
       } else if (!device.browser.satisfies(supportedBrowsers)) {
-        console.error(
+        logger.error(
           'Your browser is not supported [deviceInfo:"%o"]',
           device
         );
@@ -155,9 +156,9 @@ const EntryPage = (props: Props) => {
 
       const handlerName = detectDevice();
       if (handlerName) {
-        console.log("detected handler: %s", handlerName);
+        logger.info("detected handler: %s", handlerName);
       } else {
-        console.warn("no suitable handler found for current browser/device");
+        logger.warn("no suitable handler found for current browser/device");
         throw "Bad device";
       }
     } catch (error) {

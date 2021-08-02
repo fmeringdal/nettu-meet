@@ -3,6 +3,7 @@ import { signalingChannel } from "../../../shared/services/theme/signalling";
 import { canvasManager, CANVAS_TOPICS } from "./CanvasManager";
 import { Object as FabricObject } from "fabric/fabric-impl";
 import { meetingState } from "../../meeting/state/meeting";
+import { logger } from "../../../logger";
 
 export type CanvasAction =
   | "redo"
@@ -108,9 +109,8 @@ export const setupSocketListeners = (socket: Socket) => {
     }
 
     // parse event and call canvasManager with action to update canvas
-    console.log("recived canvas event: ");
-    console.log(e);
-    console.log("recived canvas event done");
+    logger.info({event : e},"received canvas event");
+    logger.info("received canvas event done");
   });
 };
 
