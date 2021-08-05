@@ -1,5 +1,5 @@
 import pino from 'pino';
-import { elasticsearchURL, isProduction } from './config';
+import { elasticsearchURL } from './config';
 
 const ecsFormat = require('@elastic/ecs-pino-format');
 const pinoElastic = require('pino-elasticsearch');
@@ -7,7 +7,10 @@ const pinoms = require('pino-multi-stream');
 
 const pinoMultiStream = pinoms.multistream;
 
-const streamToElastic = pinoElastic({
+let stream = [{stream: process.stdout}];
+
+if(elasticsearchURL !== null){
+  const streamToElastic = pinoElastic({
     index: 'nettu-meet',
     consistency: 'one',
     node: elasticsearchURL,
@@ -15,10 +18,7 @@ const streamToElastic = pinoElastic({
     'flush-bytes': 1000
   });
 
-let stream = [{ stream: streamToElastic }];
-
-if(!isProduction){
-  stream.push({stream: process.stdout});
+  stream.push({stream : streamToElastic});
 }
 
 const logger = pino(ecsFormat(), pinoMultiStream(stream));
