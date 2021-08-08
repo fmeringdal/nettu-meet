@@ -2,6 +2,7 @@ import { BaseController, NettuAppRequest, NettuAppResponse } from '../../../../s
 import { bodySchema, ValidateEmailVerificationCodeDTO } from './ValidateEmailVerificationCodeDTO';
 import { ValidateEmailVerificationCodeErrors } from './ValidateEmailVerificationCodeErrors';
 import { ValidateEmailVerificationCodeUseCase } from './ValidateEmailVerificationCodeUseCase';
+import { logger } from "../../../../logger"
 
 export class ValidateEmailVerificationController extends BaseController {
     private useCase: ValidateEmailVerificationCodeUseCase;
@@ -30,7 +31,7 @@ export class ValidateEmailVerificationController extends BaseController {
                 return res.ok({});
             }
         } catch (err) {
-            console.log(err);
+            logger.error({error : err}, "error", err);
             return res.fail();
         }
     }

@@ -10,6 +10,7 @@ import create from "zustand";
 import { signalingChannel } from "../../../shared/services/theme/signalling";
 import { RoomState } from "../services/PeersManager";
 import { sig } from "./sig";
+import {logger} from '../../../logger';
 
 type ProducerStore = {
   webcam?: Producer;
@@ -27,14 +28,14 @@ export const useProducerStore = create<ProducerStore>((set) => ({
           const { transports } = useTransportStore.getState();
           if (!transports) return;
           // Create
-          console.log("Creating " + media);
+          logger.info("Creating " + media);
           this[media] = await transports.send.produce({
             track: localStreams[media].getTracks()[0],
             encodings: [],
             appData: { mediaTag: media },
           });
         } else if (mediaProducer.paused) {
-          console.log("Resuming " + media);
+          logger.info("Resuming " + media);
           await sig("resume-producer", { producerId: mediaProducer.id });
           mediaProducer.resume();
         } else {
@@ -48,11 +49,11 @@ export const useProducerStore = create<ProducerStore>((set) => ({
             // Cannot pause screen because if user uses the browser native controls to stop screen
             // the browser will stop and delete the media tracks, and therefore the producer cannot be
             // resumed
-            console.log("Closing " + media);
+            logger.info("Closing " + media);
             await sig("close-producer", { producerId: producer.id });
             producer.close();
           } else {
-            console.log("Pasuing " + media);
+            logger.info("Pasuing " + media);
             await sig("pause-producer", { producerId: producer.id });
             producer.pause();
           }
@@ -204,8 +205,7 @@ export const useActivePeerConsumers = () => {
       consumers: peerConsumers.filter((c) => !c.closed && !c.paused),
     });
   }
-  console.log("activePeerConsumers");
-  console.log(activePeerConsumers);
+  logger.info({activePeerConsumers : activePeerConsumers}, "activePeerConsumers");
 
   return activePeerConsumers;
 };
@@ -348,7 +348,7 @@ export const useLocalStreams = create<LocalStreamsStore>((set, get) => ({
         },
       });
     } catch (error) {
-      console.log(error);
+      logger.error({error:error}, "error");
       alert("Unable to capture audio");
     }
   },
@@ -408,7 +408,7 @@ export const useLocalStreams = create<LocalStreamsStore>((set, get) => ({
         },
       });
     } catch (error) {
-      console.log(error);
+      logger.error({error:error}, "error");
       alert("Unable to capture webcam");
     }
   },
@@ -467,7 +467,7 @@ export const useLocalStreams = create<LocalStreamsStore>((set, get) => ({
         },
       });
     } catch (error) {
-      console.log(error);
+      logger.error({error:error}, "error");
       alert("Unable top capture screen");
     }
   },
@@ -516,7 +516,7 @@ export const useLocalStreams = create<LocalStreamsStore>((set, get) => ({
         },
       });
 
-      console.log("Lost", defaultAudioDevice);
+      logger.info({defaultAudioDevice:defaultAudioDevice},"Lost");
 
       // fallback to default
       if (defaultAudioDevice) {

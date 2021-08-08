@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import {logger} from '../../../logger'
+
 import * as s from "./SoundMeterImpl";
 
 let soundMeter: s.SoundMeter;
@@ -29,7 +31,7 @@ export const useSoundMeter = (stream?: MediaStream) => {
     start();
 
     return () => {
-      console.log("stopped sm");
+      logger.info("stopped sm");
       soundMeter && soundMeter.stop();
     };
   }, [stream]);

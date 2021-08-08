@@ -2,6 +2,7 @@ import { Socket } from 'socket.io';
 import { BaseWSController } from '../../../../shared/infra/http/models/BaseWSController';
 import { PayloadSchema, SetCanvasDataDTO, payloadSchema } from './SetCanvasDataDTO';
 import { SetCanvasDataUseCase } from './SetCanvasDataUseCase';
+import {logger} from "../../../../logger"
 
 export class SetCanvasDataController extends BaseWSController {
     private useCase: SetCanvasDataUseCase;
@@ -48,7 +49,7 @@ export class SetCanvasDataController extends BaseWSController {
             //   }
         } catch (err) {
             //   return this.fail(res, err)o
-            console.log(err);
+            logger.error({error : err}, err);
         }
     }
 }

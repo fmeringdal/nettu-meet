@@ -1,5 +1,6 @@
 import { Result } from './Result';
 import { UseCaseError } from './UseCaseError';
+import {logger} from "../../logger"
 
 export namespace AppError {
     export class UnexpectedError extends Result<UseCaseError> {
@@ -9,8 +10,7 @@ export namespace AppError {
                 message: `An unexpected error occurred.`,
                 error: err,
             } as UseCaseError);
-            console.log(`[AppError]: An unexpected error occurred`);
-            console.error(err);
+            logger.error({error : err}, `[AppError]: An unexpected error occurred`);
         }
 
         public static create(err: any): UnexpectedError {

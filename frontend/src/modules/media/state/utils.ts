@@ -7,9 +7,7 @@ import {
 import { sig } from "./sig";
 import { signalingChannel } from "../../../shared/services/theme/signalling";
 import { useRoomStore, useDeviceStore, useTransportStore } from "./state";
-
-const log = console.log;
-const err = console.error;
+import {logger} from '../../../logger'
 
 interface PeerMedia {
   paused: boolean;
@@ -46,7 +44,7 @@ export const joinRoom = async (roomId: string, name: string) => {
   }
   setupSignallingListeners(roomId);
 
-  log("join room");
+  logger.info('join room');
 
   // signal that we're a new peer and initialize our
   // mediasoup-client device, if this is our first time connecting
@@ -96,12 +94,12 @@ export const leaveRoom = async () => {
     return;
   }
 
-  log("leave room");
+  logger.info("leave room");
 
   // close everything on the server-side (transports, producers, consumers)
   const { error } = await sig("leave", {});
   if (error) {
-    err(error);
+    logger.error({error : error}, "error");
   }
 
   const { transports } = useTransportStore.getState();
@@ -115,7 +113,7 @@ export const leaveRoom = async () => {
       transports.recv.close();
     }
   } catch (e) {
-    console.error(e);
+    logger.error({error : e}, "error");
   }
   // this.recvTransport = undefined;
   // this.sendTransport = undefined;
@@ -129,29 +127,29 @@ export const leaveRoom = async () => {
 };
 
 async function pauseConsumer(consumerId: string) {
-  log("pause consumer", consumerId);
+  logger.info({consumerId : consumerId}, "pause consumer");
   try {
     await sig("pause-consumer", { consumerId });
     useRoomStore.getState().pauseConsumer(consumerId);
     // this.update();
   } catch (e) {
-    console.error(e);
+    logger.error({error: e}, "error");
   }
 }
 
 async function resumeConsumer(consumerId: string) {
-  log("resume consumer", consumerId);
+  logger.info("resume consumer", consumerId);
   try {
     await sig("resume-consumer", { consumerId });
     useRoomStore.getState().resumeConsumer(consumerId);
     // this.update();
   } catch (e) {
-    console.error(e);
+    logger.error({error: e}, "error");
   }
 }
 
 async function closeConsumer(consumerId: string) {
-  log("close consumer", consumerId);
+  logger.info({consumerId:consumerId}, "close consumer");
   try {
     // tell the server we're closing this consumer. (the server-side
     // consumer may have been closed already, but that's okay.)
@@ -160,7 +158,7 @@ async function closeConsumer(consumerId: string) {
     useRoomStore.getState().closeConsumer(consumerId);
     // this.update();
   } catch (e) {
-    console.error(e);
+    logger.error({error: e}, "error");
   }
 }
 
@@ -176,7 +174,7 @@ async function createTransport(
   // ask the server to create a server-side transport object and send
   // us back the info we need to create a client-side transport
   let transport: Transport;
-  log("transport options", transportOptions);
+  logger.info({transportOptions : transportOptions}, "transport options");
 
   if (direction === "recv") {
     transport = device.createRecvTransport(transportOptions);
@@ -190,13 +188,13 @@ async function createTransport(
   // start flowing for the first time. send dtlsParameters to the
   // server, then call callback() on success or errback() on failure.
   transport.on("connect", async ({ dtlsParameters }, callback, errback) => {
-    log("transport connect event", direction);
+    logger.info({direction : direction}, "transport connect event");
     const { error } = await sig("connect-transport", {
       transportId: transportOptions.id,
       dtlsParameters,
     });
     if (error) {
-      err("error connecting transport", direction, error);
+      logger.error({direction : direction, error : error}, "error connecting transport");
       errback();
       return;
     }
@@ -210,7 +208,7 @@ async function createTransport(
     transport.on(
       "produce",
       async ({ kind, rtpParameters, appData }, callback, errback) => {
-        log("transport produce event", appData.mediaTag);
+        logger.info({mediaTag : appData.mediaTag}, "transport produce event");
         // we may want to start out paused (if the checkboxes in the ui
         // aren't checked, for each media type. not very clean code, here
         // but, you know, this isn't a real application.)
@@ -229,7 +227,7 @@ async function createTransport(
           roomId,
         });
         if (error) {
-          err("error setting up server-side producer", error);
+          logger.error({error:error}, "error setting up server-side producer");
           errback();
           return;
         }
@@ -242,12 +240,12 @@ async function createTransport(
   // failed, or disconnected, leave the room and reset
   //
   transport.on("connectionstatechange", async (state) => {
-    log(`transport ${transport.id} connectionstatechange ${state}`);
+    logger.info(`transport ${transport.id} connectionstatechange ${state}`);
     // for this simple sample code, assume that transports being
     // closed is an error (we never close these transports except when
     // we leave the room)
     if (state === "closed" || state === "failed" || state === "disconnected") {
-      log("transport closed ... leaving the room and resetting");
+      logger.info("transport closed ... leaving the room and resetting");
       leaveRoom();
     }
   });
@@ -282,7 +280,7 @@ const setupSignallingListeners = (roomId: string) => {
     useRoomStore.getState().removePeer(peerId);
   });
   signalingChannel.on("activeSpeaker", (data: any) => {
-    console.log({
+    logger.info({
       topic: "activeSpeaker",
       data,
     });
@@ -317,7 +315,7 @@ const setupSignallingListeners = (roomId: string) => {
     // until we're connected, then send a resume request to the server
     // to get our first keyframe and start displaying video
     while (transports.recv.connectionState !== "connected") {
-      log("  transport connstate", transports.recv.connectionState);
+      logger.info({connectionState : transports.recv.connectionState},"  transport connstate");
       await sleep(100);
     }
 

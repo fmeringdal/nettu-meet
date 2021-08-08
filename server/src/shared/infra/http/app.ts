@@ -14,6 +14,7 @@ import { redisConnection } from '../../services';
 import { createDefaultAccountController } from '../../../modules/account/useCases/createDefaultAccount';
 import { _db_connect_promise } from '../db/connection';
 import { isProduction } from '../../../config';
+import { logger } from "../../../logger"
 
 const corsConfig = {
     origin: isProduction ? '*' : '*',
@@ -65,7 +66,7 @@ app.use(morgan('combined'));
 app.use('/api/v1', v1Router);
 
 server.listen(port, async () => {
-    console.log(`[App]: Listening on port ${port}`);
+    logger.info(`[App]: Listening on port ${port}`);
 
     // Setup default account if provided
     await _db_connect_promise;

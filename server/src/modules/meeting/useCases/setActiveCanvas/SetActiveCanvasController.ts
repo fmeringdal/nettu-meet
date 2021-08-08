@@ -3,6 +3,7 @@ import { BaseWSController } from '../../../../shared/infra/http/models/BaseWSCon
 import { payloadSchema } from '../../../chat/useCases/sendChatMessage/SendChatMessageDTO';
 import { SetActiveCanvasDTO } from './SetActiveCanvasDTO';
 import { SetActiveCanvasUseCase } from './SetActiveCanvasUseCase';
+import {logger} from "../../../../logger"
 
 export class SetActiveCanvasController extends BaseWSController {
     private useCase: SetActiveCanvasUseCase;
@@ -23,7 +24,7 @@ export class SetActiveCanvasController extends BaseWSController {
 
             await this.useCase.execute(dto);
         } catch (err) {
-            console.log(err);
+            logger.error({error : err}, err);
         }
     }
 }

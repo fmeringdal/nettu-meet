@@ -1,5 +1,6 @@
 import Joi from 'joi';
 import { Socket } from 'socket.io';
+import { logger } from "../../../../logger"
 
 export abstract class BaseWSController<T = {}> {
     private reqSchema: Joi.Schema<T>;
@@ -21,8 +22,7 @@ export abstract class BaseWSController<T = {}> {
         try {
             await this.executeImpl(socket, payload);
         } catch (err) {
-            console.log(`[BaseController]: Uncaught controller error`);
-            console.log(err);
+            logger.error({error : err}, `[BaseController]: Uncaught controller error`);
         }
     }
 }

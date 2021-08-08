@@ -10,6 +10,7 @@ import {
 } from "../services/meetingService";
 import { updateMeetingState } from "../state/meeting";
 import { useResourceDrawer } from "../state/resourceDrawer";
+import { logger } from "../../../logger";
 
 export interface IMeetingInteractor {
   getMeetingById(meetingId: string): Promise<Meeting | undefined>;
@@ -51,8 +52,7 @@ export class MeetingInteractor implements IMeetingInteractor {
     });
 
     signalingChannel.on("new-resource", (e: string) => {
-      console.log("on resource controller");
-      console.log(e);
+      logger.info({e : e}, "on resource controller");
       const resource = JSON.parse(e) as Resource;
       this.onResourceCreated(resource);
     });
@@ -67,8 +67,7 @@ export class MeetingInteractor implements IMeetingInteractor {
     try {
       meeting = await this.meetingService.getMeetingById(meetingId);
     } catch (error) {}
-    console.log("meeting got");
-    console.log(meeting);
+    logger.info({meeting : meeting}, "meeting got");
     updateMeetingState((s) => ({
       ...s,
       isLoadingMeeting: false,

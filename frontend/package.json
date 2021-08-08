@@ -22,6 +22,7 @@
     "hark": "^1.2.3",
     "material-ui-color": "^1.2.0",
     "mediasoup-client": "^3.6.29",
+    "pino": "^7.0.0-rc.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-dropzone": "^11.2.4",
