@@ -235,7 +235,7 @@ export const CanvasToolbar = (props: Props) => {
           <BoxCenter style={{ margin: "0 10px" }}>
             <ColorPicker
             defaultValue="#000"
-            onChange={c => canvasManager.setColor('#' + c.hex)}
+            onChange={c => canvasManager.setColor(c)}
             value={color}
             palette={colorOptions} />
           </BoxCenter>

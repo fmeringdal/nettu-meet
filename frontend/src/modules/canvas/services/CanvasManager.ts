@@ -2,6 +2,7 @@ import { EventEmitter } from "events";
 import { fabric } from "fabric";
 import { Canvas, IEvent, Object as FabricObject } from "fabric/fabric-impl";
 import { CanvasStateManager } from "./CanvasStateManager";
+import { Color } from "material-ui-color";
 
 export const CANVAS_ELEMENT_ID = "conference_canvas";
 
@@ -162,9 +163,9 @@ export class CanvasManager extends EventEmitter {
     this.emit(CANVAS_TOPICS.TOOLBAR_CHANGED, this.canvasToolbar);
   }
 
-  setColor = (color: string) => {
+  setColor = (color: any) => {
     const canvas = this.getCanvas();
-    canvas.freeDrawingBrush.color = color;
+    canvas.freeDrawingBrush.color = '#'+color.hex;
     this.toolbar.color = color;
     if (this.toolbar.selectedObject) {
       this.toolbar.selectedObject.set({
