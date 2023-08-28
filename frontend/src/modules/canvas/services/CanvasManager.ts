@@ -2,7 +2,7 @@ import { EventEmitter } from "events";
 import { fabric } from "fabric";
 import { Canvas, IEvent, Object as FabricObject } from "fabric/fabric-impl";
 import { CanvasStateManager } from "./CanvasStateManager";
-import { Color } from "material-ui-color";
+import { Color, createColor } from "material-ui-color";
 
 export const CANVAS_ELEMENT_ID = "conference_canvas";
 
@@ -18,7 +18,7 @@ export enum CANVAS_MODE {
 
 export type CanvasToolbar = {
   mode: string;
-  color: string;
+  color: Color;
   brushWidth: number;
   selectedObject?: FabricObject;
 };
@@ -60,7 +60,7 @@ export class CanvasManager extends EventEmitter {
     super();
     this.toolbar = {
       mode: CANVAS_MODE.FREEDRAW,
-      color: "#000",
+      color: createColor("#000"),
       brushWidth: 7,
     };
     this.mouse = {
@@ -163,15 +163,16 @@ export class CanvasManager extends EventEmitter {
     this.emit(CANVAS_TOPICS.TOOLBAR_CHANGED, this.canvasToolbar);
   }
 
-  setColor = (color: any) => {
+  setColor = (color: Color) => {
     const canvas = this.getCanvas();
-    canvas.freeDrawingBrush.color = '#'+color.hex;
+    const hex = '#' + color.hex;
+    canvas.freeDrawingBrush.color = hex;
     this.toolbar.color = color;
     if (this.toolbar.selectedObject) {
       this.toolbar.selectedObject.set({
         fill:
-          this.toolbar.selectedObject.type === "line" ? color : "transparent",
-        stroke: color,
+          this.toolbar.selectedObject.type === "line" ? hex : "transparent",
+        stroke: hex,
       });
       this.onObjectModified(this.toolbar.selectedObject);
     }
@@ -227,7 +228,7 @@ export class CanvasManager extends EventEmitter {
   initializeCanvas(canvasJSON: any) {
     this.canvas = new fabric.Canvas(CANVAS_ELEMENT_ID);
     (window as any).canvas = this.canvas;
-    this.canvas.freeDrawingBrush.color = this.toolbar.color;
+    this.canvas.freeDrawingBrush.color = '#'+this.toolbar.color.hex;
     this.canvas.freeDrawingBrush.width = this.toolbar.brushWidth;
 
     this.canvas.isDrawingMode = false;
