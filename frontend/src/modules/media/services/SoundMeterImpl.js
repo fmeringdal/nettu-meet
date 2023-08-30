@@ -36,6 +36,7 @@ function SoundMeter(context, cb) {
   };
 }
 
+const logger = require("../../../logger");
 SoundMeter.prototype.connectToSource = function (stream, callback) {
   try {
     this.mic = this.context.createMediaStreamSource(stream);
@@ -46,7 +47,7 @@ SoundMeter.prototype.connectToSource = function (stream, callback) {
       callback(null);
     }
   } catch (e) {
-    console.error(e);
+    logger.error({error : e}, e);
     if (typeof callback !== "undefined") {
       callback(e);
     }

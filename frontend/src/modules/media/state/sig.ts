@@ -4,7 +4,7 @@
 import { apiConfig } from "../../../config/api";
 import { signalingChannel } from "../../../shared/services/theme/signalling";
 import { useRoomStore } from "./state";
-
+import { logger } from "../../../logger"
 //
 export const sig = async (endpoint: string, data: any) => {
     if (!data.roomId) {
@@ -20,7 +20,7 @@ export const sig = async (endpoint: string, data: any) => {
         );
         return await response.json();
     } catch (e) {
-        console.error(e);
+        logger.error({error : e}, e);
         return { error: e };
     }
 }

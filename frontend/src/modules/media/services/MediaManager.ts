@@ -9,6 +9,7 @@ import {
   Producer,
 } from "mediasoup-client/lib/types";
 import { apiConfig } from "../../../config/api";
+import { logger } from "../../../logger";
 
 export interface Peer {
   peerId: string;
@@ -106,7 +107,7 @@ export class MediaManager extends EventEmitter {
       this.sendTransportOptions = sendTransportOptions;
       this.joined = true;
     } catch (e) {
-      console.error(e);
+      logger.error({error : e}, e);
       return;
     }
 
@@ -217,8 +218,8 @@ export class MediaManager extends EventEmitter {
       // until we're connected, then send a resume request to the server
       // to get our first keyframe and start displaying video
       while (this.recvTransport.connectionState !== "connected") {
-        console.log(
-          "  transport connstate",
+        logger.info({connectionState : this.recvTransport.connectionState}, 
+          "  transport connstate" +
           this.recvTransport.connectionState
         );
         await new Promise((res) => setTimeout(() => res(""), 100));
@@ -282,7 +283,7 @@ export class MediaManager extends EventEmitter {
       );
       return await response.json();
     } catch (e) {
-      console.error(e);
+      logger.error({error : e}, e);
       return { error: e };
     }
   }

@@ -19,5 +19,18 @@ services:
         logging:
             driver: none
 
+    elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.1.0
+        environment: 
+            - discovery.type=single-node
+        container_name: elasticsearch
+        ports: ['9200:9200']
+    
+    kibana:
+        image: docker.elastic.co/kibana/kibana:7.1.0
+        container_name: kibana
+        ports: ['5601:5601']
+        depends_on: ['elasticsearch']
+
 volumes:
     mongodb_data_nettumeet_container:

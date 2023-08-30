@@ -384,12 +384,12 @@ export class CanvasManager extends EventEmitter {
   };
 
   private commitObject(obj: FabricObject) {
-    console.log("commiting object");
+    logger.info("commiting object");
     this.emit(CANVAS_TOPICS.OBJECT_ADDED, obj);
   }
 
   private addObject(obj: FabricObject, commit?: boolean) {
-    console.log("adding object but not commiting? ", commit);
+    logger.info({commit:commit},"adding object but not commiting? ");
     this.getCanvas().add(obj);
     if (commit) {
       this.commitObject(obj);
@@ -522,18 +522,18 @@ export class CanvasManager extends EventEmitter {
   };
 
   private onSelectionCreated = (e: IEvent): void => {
-    console.log("onSelectionCreated: " + e);
+    logger.info("onSelectionCreated: " + e);
     if (e.target === this.toolbar.selectedObject) return;
     this.setSelectedObject(e.target);
   };
 
   private onSelectionCleared = (e: IEvent): void => {
-    console.log("onSelectionCleared: " + e);
+    logger.info("onSelectionCleared: " + e);
     this.setSelectedObject(undefined);
   };
 
   private onSelectionUpdated = (e: IEvent): void => {
-    console.log("onSelectionUpdated: " + e);
+    logger.info("onSelectionUpdated: " + e);
     if (e.target === this.toolbar.selectedObject) return;
     this.setSelectedObject(e.target);
   };
@@ -570,7 +570,7 @@ export class CanvasManager extends EventEmitter {
   // external events from other users
   onExternalObjectCreated = async (oProps: any) => {
     let o: FabricObject;
-    console.log("type of o: " + oProps.type);
+    logger.info("type of o: " + oProps.type);
     switch (oProps.type) {
       case "path":
         o = new fabric.Path(

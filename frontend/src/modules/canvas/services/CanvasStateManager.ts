@@ -1,3 +1,5 @@
+import { logger } from "../../../logger";
+
 export class CanvasStateManager {
   private currentState: string;
   private stateStack: string[]; //Undo stack
@@ -28,7 +30,7 @@ export class CanvasStateManager {
       //Reset the redo stack.
       //We can only redo things that were just undone.
       this.redoStack.length = 0;
-      console.log("saved state");
+      logger.info("saved state");
     }
   }
 
@@ -46,8 +48,7 @@ export class CanvasStateManager {
 
   //Root function for both undo and redo; operates on the passed-in stack
   private applyState(stack: string[], newState: any, callBack?: Function) {
-    console.log("applying state: ");
-    console.log(newState);
+    logger.info({newState : newState},"applying state");
     //Push the current state
     stack.push(this.currentState);
 

@@ -2,6 +2,7 @@ import { BaseController, NettuAppRequest, NettuAppResponse } from '../../../../s
 import { bodySchema, CreateEmailVerificationCodeDTO } from './CreateEmailVerificationCodeDTO';
 import { CreateEmailVerificationCodeErrors } from './CreateEmailVerificationCodeErrors';
 import { CreateEmailVerificationCodeUseCase } from './CreateEmailVerificationCodeUseCase';
+import {logger} from "../../../../logger"
 
 export class CreateEmailVerificationController extends BaseController {
     private useCase: CreateEmailVerificationCodeUseCase;
@@ -32,7 +33,7 @@ export class CreateEmailVerificationController extends BaseController {
                 return res.created({});
             }
         } catch (err) {
-            console.log(err);
+            logger.error({error : err}, "error", err);
             return res.fail();
         }
     }

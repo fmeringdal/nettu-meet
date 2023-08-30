@@ -17,6 +17,7 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { meetingInteractor } from "../../meeting/interactors";
 import { meetingState } from "../../meeting/state/meeting";
 import { Resource } from "../../meeting/domain/resource";
+import { logger } from "../../../logger";
 
 const colorOptions = [
   "#e74c3c",
@@ -220,8 +221,7 @@ export const GraphCreatorModal = (props: Props) => {
         data: graphs,
       });
     } catch (error) {
-      console.log(error);
-      console.log(graphs);
+      logger.error({error: error, graphs : graphs}, "error");
     }
   }, [graphs, gridConfig]);
 

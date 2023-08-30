@@ -1,3 +1,5 @@
+import { logger } from "../../logger";
+
 export class Result<T> {
   public isSuccess: boolean;
   public isFailure: boolean;
@@ -26,7 +28,7 @@ export class Result<T> {
 
   public getValue(): T {
     if (!this.isSuccess) {
-      console.log(this.error);
+      logger.error({error : this.error}, "error");
       throw new Error(
         "Can't get the value of an error result. Use 'errorValue' instead."
       );
