@@ -3,6 +3,7 @@ import { fabric } from "fabric";
 import { Canvas, IEvent, Object as FabricObject } from "fabric/fabric-impl";
 import { CanvasStateManager } from "./CanvasStateManager";
 import { Color, createColor } from "material-ui-color";
+import { logger } from "../../../logger";
 
 export const CANVAS_ELEMENT_ID = "conference_canvas";
 
