@@ -18,7 +18,7 @@ import React, {
   CSSProperties,
   Fragment,
 } from "react";
-import { ColorPicker } from 'material-ui-color';
+import { ColorPicker, createColor } from 'material-ui-color';
 import { FileUploadModal } from "../../../shared/components/FileUploadModal";
 import { canvasManager, CANVAS_MODE } from "../services/CanvasManager";
 import { useToolbarState } from "../services/ToolbarInteractor";
@@ -234,8 +234,8 @@ export const CanvasToolbar = (props: Props) => {
         <Fragment>
           <BoxCenter style={{ margin: "0 10px" }}>
             <ColorPicker
-            defaultValue="#000"
-            onChange={c => canvasManager.setColor('#' + c.hex)}
+            defaultValue={createColor("#000")}
+            onChange={c => canvasManager.setColor(c)}
             value={color}
             palette={colorOptions} />
           </BoxCenter>
